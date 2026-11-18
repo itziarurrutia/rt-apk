@@ -1,0 +1,25 @@
+package es.unavarra.rtapk.domain;
+
+import java.time.LocalDate;
+
+/**
+ * Equipo inventariado (asset). En RT es un ticket de una cola {@code assets.*} cuyos datos están en
+ * campos personalizados; aquí solo se exponen los que usa la aplicación.
+ *
+ * @param id     id del ticket de RT que representa el asset
+ * @param fechaP valor tal cual viene de RT (puede llevar marcas como un {@code *} final)
+ */
+public record Asset(
+        long id,
+        String numeroInventario,
+        String numeroSerie,
+        String marca,
+        String modelo,
+        String sufijoDns,
+        String ipEth0,
+        String macEth0,
+        LocalDate fechaCompra,
+        LocalDate garantia,
+        String fechaP,
+        String usuarioWindows) {
+}

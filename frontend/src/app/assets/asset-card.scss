@@ -1,0 +1,154 @@
+.avatar {
+  display: grid;
+  place-items: center;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  border-radius: 50%;
+}
+
+mat-card-title a {
+  color: inherit;
+}
+
+.chips {
+  margin: 8px 0 4px;
+}
+
+mat-chip.match {
+  --mat-chip-disabled-container-opacity: 1;
+  --mat-chip-disabled-label-text-color: var(--mat-sys-on-secondary-container);
+  --mat-chip-elevated-disabled-container-color: var(--mat-sys-secondary-container);
+}
+
+mat-chip.ok {
+  --mat-chip-disabled-container-opacity: 1;
+  --mat-chip-disabled-label-text-color: #0f5132;
+  --mat-chip-elevated-disabled-container-color: #d1e7dd;
+}
+
+mat-chip.ko {
+  --mat-chip-disabled-container-opacity: 1;
+  --mat-chip-disabled-label-text-color: var(--mat-sys-on-error-container);
+  --mat-chip-elevated-disabled-container-color: var(--mat-sys-error-container);
+}
+
+/* Bloques: Tipo de equipo, Red, Inventario y Cuenta. Dos por fila en escritorio, uno en móvil */
+.groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+section {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container-low);
+}
+
+h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-primary);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px 24px;
+  margin: 0;
+}
+
+dt {
+  font: var(--mat-sys-label-medium);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+dd {
+  margin: 2px 0 0;
+  font: var(--mat-sys-body-large);
+  overflow-wrap: anywhere;
+}
+
+.fecha-p {
+  /* Ocupa dos columnas para que quepa Pass_iz completo */
+  grid-column: span 2;
+
+  .fecha-p-value {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Pass_iz con el ojo al lado, con aspecto de campo de contraseña */
+  .pass {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    margin-top: 6px;
+    padding-left: 8px;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 4px;
+  }
+
+  .secret {
+    font-family: 'Roboto Mono', ui-monospace, monospace;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+
+    &.fragment {
+      color: var(--mat-sys-primary);
+      font-weight: 500;
+    }
+  }
+
+  /* Se mantiene pulsado: sin selección de texto ni menú contextual en móvil */
+  .eye {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  mat-spinner {
+    margin: 10px 12px;
+  }
+
+  .error {
+    display: block;
+    color: var(--mat-sys-error);
+    font: var(--mat-sys-body-small);
+  }
+}
+
+.mono {
+  font-family: 'Roboto Mono', ui-monospace, monospace;
+  font-size: 14px;
+  /* IP y MAC en una sola línea */
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+@media (max-width: 599px) {
+  section {
+    padding: 12px;
+  }
+
+  dl {
+    gap: 12px 16px;
+  }
+
+  .mono {
+    font-size: 13px;
+  }
+}

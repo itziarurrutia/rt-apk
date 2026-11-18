@@ -1,0 +1,48 @@
+package es.unavarra.rtapk.rt;
+
+import es.unavarra.rtapk.domain.TicketQuery;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Traduce {@link TicketQuery} a TicketSQL. TicketSQL es el mismo en REST 1.0 y REST2, así que lo
+ * comparten ambos adaptadores. Todos los valores se escapan: nunca concatenar texto del usuario a mano.
+ */
+public final class TicketSqlBuilder {
+
+    private TicketSqlBuilder() {
+    }
+
+    public static String build(TicketQuery query) {
+        List<String> clauses = new ArrayList<>();
+        if (StringUtils.hasText(query.requestor())) {
+            clauses.add("Requestor = " + quote(query.requestor()));
+        }
+        if (!query.statuses().isEmpty()) {
+            clauses.add(query.statuses().stream()
+                    .map(s -> "Status = " + quote(s))
+                    .collect(Collectors.joining(" OR ", "(", ")")));
+        }
+        if (StringUtils.hasText(query.queue())) {
+            clauses.add("Queue = " + quote(query.queue()));
+        }
+        if (StringUtils.hasText(query.subjectContains())) {
+            clauses.add("Subject LIKE " + quote(query.subjectContains()));
+        }
+        // RT exige una consulta; sin criterios se piden todos los tickets
+        return clauses.isEmpty() ? "id > 0" : String.join(" AND ", clauses);
+    }
+
+    /** "(Queue = 'apoyo.dpto' AND LastUpdated > '5 hours ago' AND Status = '__Active__')" */
+    public static String recentActive(String queue, String updatedSince) {
+        return "(Queue = " + quote(queue) + " AND LastUpdated > " + quote(updatedSince)
+                + " AND Status = '__Active__')";
+    }
+
+    static String quote(String value) {
+        return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
+    }
+}

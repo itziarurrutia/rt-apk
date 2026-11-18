@@ -1,0 +1,18 @@
+[Unit]
+Description=rt-apk backend (Spring Boot)
+
+[Container]
+ContainerName=rt-apk-backend
+Image=localhost/rt-apk-backend:latest
+Pod=rt-apk.pod
+EnvironmentFile=%h/.config/rt-apk/backend.env
+# Contraseña de la cuenta de servicio de RT (descomentar al conectar con RT):
+#   podman secret create rt-apk-rt-password -
+#Secret=rt-apk-rt-password,type=mount,target=/run/secrets/rt_password
+#Environment=RT_PASSWORD_FILE=/run/secrets/rt_password
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

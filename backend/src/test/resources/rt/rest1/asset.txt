@@ -1,0 +1,63 @@
+RT/4.4.4 200 Ok
+
+id: ticket/1908964
+Queue: assets.sobremesas-dpto
+Owner: Nobody
+Creator: RT_System
+Subject: eim-dpt-78763
+Status: new
+Requestors:
+Created: 2026-11-04 12:48:36
+Resolved: No establecido
+LastUpdated: 2026-11-04 12:52:19
+CF.{Campus}: Arrosadia
+CF.{Edificio}: 113 - Pinos
+CF.{NDepartamento}: Estadistica, matematicas e informatica
+CF.{Planta}: 1 - Primera
+CF.{Espacio}: 113001002
+CF.{Codigo espacio}: 001002
+CF.{Nombre espacio}: Despacho
+CF.{Tipo espacio}: Despacho
+CF.{Punto de red}:
+CF.{Sufijo DNS}: dyc.a.unavarra.es (DA)
+CF.{Mac eth0}: 30C599728B91
+CF.{Mac1}:
+CF.{Ip eth0}: 172.18.215.244
+CF.{Ip1}:
+CF.{Comentario de red}:
+CF.{Marca}: TTL
+CF.{Modelo}: TeknoPro Q870
+CF.{Sistema Operativo}: Windows 11
+CF.{version SO}:
+CF.{Numero de inventario}: 78763
+CF.{Numero de serie}: 1236718
+CF.{Fecha de compra}: 2026/11/06
+CF.{Garantia}: 2030/12/21
+CF.{Fecha de revision}: 2026-11-04
+CF.{Fecha_p}: 2026/01/31*
+CF.{Empresa suministradora}: Teknoservice
+CF.{Type}: Sobremesa torre
+CF.{AssetId}:
+CF.{EstadoAsset}: produccion
+CF.{Responsable}: carlos.lopez@example.org
+CF.{Usuario Windows}: carlos.lopez
+CF.{Uso}: II.a: Personal PDI
+CF.{Excepciones}:
+CF.{Homologacion}: 2026A
+CF.{Version clon}:
+CF.{Actuacion pendiente}:
+CF.{Descripcion}:
+CF.{Tramitacion garantia}:
+CF.{Acceso remoto}:
+CF.{Memoria}:
+CF.{Procesador}:
+CF.{renovacion}:
+CF.{Profiles}:
+Cuenta: carlos.lopez
+TicketsApoyo: 0
+TicketsAverias: 1
+Tipo cuenta Windows: DA
+Uso: Sin especificar
+Replicador: NO
+Asset config:
+

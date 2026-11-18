@@ -1,0 +1,24 @@
+RT/5.0.3 200 Ok
+
+id: ticket/1235
+Subject: Impresora atascada
+Queue: Soporte
+Status: new
+Owner: Nobody
+Requestors: ana.garcia@example.org
+Priority: 0
+Created: Wed Mar 06 09:00:00 2024
+LastUpdated: Wed Mar 06 09:00:00 2024
+
+--
+
+id: ticket/1234
+Subject: No puedo acceder a la VPN
+Queue: Soporte
+Status: open
+Owner: jlopez
+Requestors: ana.garcia@example.org, b.perez@example.org
+Priority: 10
+Created: Mon Mar 04 10:22:11 2024
+LastUpdated: Tue Mar 05 08:01:59 2024
+

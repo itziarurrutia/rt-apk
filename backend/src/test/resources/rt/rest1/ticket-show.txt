@@ -1,0 +1,27 @@
+RT/5.0.3 200 Ok
+
+id: ticket/1234
+Queue: Soporte
+Owner: jlopez
+Creator: ana.garcia@example.org
+Subject: No puedo acceder a la VPN
+Status: open
+Priority: 10
+InitialPriority: 0
+FinalPriority: 0
+Requestors: ana.garcia@example.org, b.perez@example.org
+Cc:
+AdminCc:
+Created: Mon Mar  4 10:22:11 2024
+Starts: Not set
+Started: Mon Mar 04 10:30:00 2024
+Due: Not set
+Resolved: Not set
+Told: Not set
+LastUpdated: Tue Mar 05 08:01:59 2024
+TimeEstimated: 0
+TimeWorked: 15 minutes
+TimeLeft: 0
+CF.{Centro}: Edificio Los Madroños
+CF.{Tipo de incidencia}: Red
+

@@ -1,0 +1,135 @@
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-icon mat-card-avatar class="avatar">computer</mat-icon>
+    <mat-card-title>
+      @if (linkToDetail() && asset().numeroInventario) {
+        <a [routerLink]="['/assets', asset().numeroInventario]">{{ title() }}</a>
+      } @else {
+        {{ title() }}
+      }
+    </mat-card-title>
+    <mat-card-subtitle>Inventario {{ asset().numeroInventario ?? '—' }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <mat-chip-set class="chips">
+      @if (matchedByLabel(); as label) {
+        <mat-chip disabled class="match">Coincide por {{ label }}</mat-chip>
+      }
+      @if (inWarranty() === true) {
+        <mat-chip disabled class="ok">En garantía</mat-chip>
+      } @else if (inWarranty() === false) {
+        <mat-chip disabled class="ko">Fuera de garantía</mat-chip>
+      }
+    </mat-chip-set>
+
+    <div class="groups">
+      <section aria-labelledby="g-tipo-{{ asset().id }}">
+        <h3 id="g-tipo-{{ asset().id }}"><mat-icon>devices</mat-icon> Tipo de equipo</h3>
+        <dl>
+          <div>
+            <dt>Marca</dt>
+            <dd>{{ asset().marca ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Modelo</dt>
+            <dd>{{ asset().modelo ?? '—' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section aria-labelledby="g-red-{{ asset().id }}">
+        <h3 id="g-red-{{ asset().id }}"><mat-icon>lan</mat-icon> Red</h3>
+        <dl>
+          <div>
+            <dt>IP eth0</dt>
+            <dd class="mono">{{ asset().ipEth0 ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>MAC eth0</dt>
+            <dd class="mono" [title]="asset().macEth0 ?? ''">{{ mac() ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Sufijo DNS</dt>
+            <dd>{{ asset().sufijoDns ?? '—' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section aria-labelledby="g-inv-{{ asset().id }}">
+        <h3 id="g-inv-{{ asset().id }}"><mat-icon>inventory_2</mat-icon> Inventario</h3>
+        <dl>
+          <div>
+            <dt>Nº de inventario</dt>
+            <dd>{{ asset().numeroInventario ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Nº de serie</dt>
+            <dd>{{ asset().numeroSerie ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Fecha de compra</dt>
+            <dd>{{ (asset().fechaCompra | date: 'dd/MM/yyyy') ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Garantía</dt>
+            <dd>{{ (asset().garantia | date: 'dd/MM/yyyy') ?? '—' }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section aria-labelledby="g-cuenta-{{ asset().id }}">
+        <h3 id="g-cuenta-{{ asset().id }}"><mat-icon>person</mat-icon> Cuenta</h3>
+        <dl>
+          <div>
+            <dt>Usuario Windows</dt>
+            <dd>{{ asset().usuarioWindows ?? '—' }}</dd>
+          </div>
+          <div class="fecha-p">
+            <dt>Fecha P</dt>
+            <dd class="fecha-p-value">
+              <span>{{ asset().fechaP ?? '—' }}</span>
+              @if (asset().numeroInventario) {
+                <mat-slide-toggle
+                  [checked]="passOn()"
+                  (change)="togglePass($event)"
+                  aria-label="Pass_iz"
+                />
+              }
+            </dd>
+            @if (passOn()) {
+              <div class="pass" aria-live="polite">
+                @if (passLoading()) {
+                  <mat-spinner diameter="20" />
+                } @else if (passError(); as message) {
+                  <span class="error">{{ message }}</span>
+                } @else if (pass()) {
+                  <span class="secret" [class.fragment]="showFragment()">{{ passText() }}</span>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    class="eye"
+                    aria-label="Mantener pulsado para ver el fragmento"
+                    [attr.aria-pressed]="showFragment()"
+                    (pointerdown)="pressEye($event)"
+                    (pointerup)="releaseEye()"
+                    (pointerleave)="releaseEye()"
+                    (pointercancel)="releaseEye()"
+                    (keydown.space)="pressEye($event)"
+                    (keydown.enter)="pressEye($event)"
+                    (keyup.space)="releaseEye()"
+                    (keyup.enter)="releaseEye()"
+                    (blur)="releaseEye()"
+                    (contextmenu)="$event.preventDefault()"
+                  >
+                    <mat-icon>{{ showFragment() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </dl>
+      </section>
+    </div>
+  </mat-card-content>
+</mat-card>

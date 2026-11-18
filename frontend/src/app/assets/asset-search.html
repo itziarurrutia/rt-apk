@@ -1,0 +1,50 @@
+<h1>Equipos</h1>
+
+<form class="search" [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Buscar equipo</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      matInput
+      [formControl]="query"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      enterkeyhint="search"
+      placeholder="78763, PF4XK21B o carlos.lopez"
+    />
+    @if (query.value) {
+      <button matSuffix mat-icon-button type="button" aria-label="Borrar" (click)="clear()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+    <mat-hint>Nº de inventario, nº de serie o usuario de Windows</mat-hint>
+    @if (query.hasError('pattern')) {
+      <mat-error>Solo letras, números, '.', '_' o '-', sin espacios</mat-error>
+    } @else if (query.hasError('required')) {
+      <mat-error>Escribe qué quieres buscar</mat-error>
+    }
+  </mat-form-field>
+  <button mat-flat-button type="submit">Buscar</button>
+</form>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+
+@if (error(); as message) {
+  <p class="message error" role="alert"><mat-icon>error</mat-icon> {{ message }}</p>
+}
+
+@if (results(); as matches) {
+  @if (matches.length === 0) {
+    <p class="message"><mat-icon>search_off</mat-icon> No se ha encontrado ningún equipo para «{{ searched() }}».</p>
+  } @else {
+    <p class="count">{{ matches.length }} {{ matches.length === 1 ? 'equipo' : 'equipos' }} para «{{ searched() }}»</p>
+    <div class="results">
+      @for (match of matches; track match.asset.id) {
+        <app-asset-card [asset]="match.asset" [matchedBy]="match.matchedBy" [linkToDetail]="true" />
+      }
+    </div>
+  }
+}

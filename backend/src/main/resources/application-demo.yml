@@ -1,0 +1,8 @@
+# Perfil demo: sin Keycloak y sin RT. Datos de ejemplo en memoria y acceso sin autenticar.
+# Arrancar con SPRING_PROFILES_ACTIVE=demo (o --spring.profiles.active=demo). NUNCA en producción.
+rt:
+  api-version: demo
+
+app:
+  security:
+    enabled: false

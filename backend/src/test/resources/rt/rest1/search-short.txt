@@ -1,0 +1,7 @@
+RT/4.4.4 200 Ok
+
+1909547: Problema con sistema de impresión
+1917113: Problema con la impresora
+1917617: pendiente
+1917756: Lola Ayuda
+

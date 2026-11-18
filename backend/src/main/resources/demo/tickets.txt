@@ -1,0 +1,52 @@
+RT/4.4.4 200 Ok
+
+id: ticket/1909547
+Subject: Problema con sistema de impresión
+Queue: apoyo.dpto
+Status: new
+Owner: david.blasco
+Requestors: demo@example.org
+Priority: 10
+Created: 2026-11-05 09:14:26
+LastUpdated: 2026-11-09 09:07:50
+CF.{NDepartamento}: Economia
+
+--
+
+id: ticket/1917113
+Subject: Problema con la impresora
+Queue: apoyo.dpto
+Status: open
+Owner: jlopez
+Requestors: demo@example.org, carlos.lopez@example.org
+Priority: 5
+Created: 2026-11-16 10:22:11
+LastUpdated: 2026-11-17 08:01:59
+CF.{NDepartamento}: Estadistica, matematicas e informatica
+
+--
+
+id: ticket/1917756
+Subject: No funciona la VPN
+Queue: apoyo.dpto
+Status: stalled
+Owner: Nobody
+Requestors: demo@example.org
+Priority: 0
+Created: 2026-11-17 09:00:00
+LastUpdated: 2026-11-17 09:00:00
+CF.{NDepartamento}:
+
+--
+
+id: ticket/2000870
+Subject: Instalar software de estadística en eim-dpt-78763
+Queue: Software
+Status: resolved
+Owner: mruiz
+Requestors: demo@example.org, carlos.lopez@example.org
+Priority: 5
+Created: 2026-11-02 12:10:00
+LastUpdated: 2026-11-04 16:45:20
+CF.{NDepartamento}: Estadistica, matematicas e informatica
+

@@ -1,0 +1,71 @@
+<a mat-button routerLink="/tickets"><mat-icon>arrow_back</mat-icon> Tickets</a>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+}
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (ticket(); as t) {
+  <h1>{{ t.subject }}</h1>
+  <dl class="info">
+    <div>
+      <dt>Número</dt>
+      <dd>#{{ t.id }}</dd>
+    </div>
+    <div>
+      <dt>Estado</dt>
+      <dd>{{ statusLabel(t.status) }}</dd>
+    </div>
+    <div>
+      <dt>Cola</dt>
+      <dd>{{ t.queue }}</dd>
+    </div>
+    <div>
+      <dt>Responsable</dt>
+      <dd>{{ t.owner === 'Nobody' ? 'Sin asignar' : t.owner }}</dd>
+    </div>
+    <div>
+      <dt>Creado</dt>
+      <dd>{{ t.created | date: 'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+    <div>
+      <dt>Actualizado</dt>
+      <dd>{{ t.lastUpdated | date: 'dd/MM/yyyy HH:mm' }}</dd>
+    </div>
+  </dl>
+
+  <h2>Historial</h2>
+  <div class="history">
+    @for (h of history(); track h.id) {
+      <mat-card appearance="outlined" [class.internal]="h.type === 'Comment'">
+        <mat-card-header>
+          <mat-card-title>{{ historyLabel(h.type) }}</mat-card-title>
+          <mat-card-subtitle
+            >{{ h.creator }} · {{ h.created | date: 'dd/MM/yyyy HH:mm' }}</mat-card-subtitle
+          >
+        </mat-card-header>
+        @if (h.content) {
+          <mat-card-content
+            ><p class="content">{{ h.content }}</p></mat-card-content
+          >
+        }
+      </mat-card>
+    }
+  </div>
+
+  <h2>Responder</h2>
+  <form class="reply" [formGroup]="form" (ngSubmit)="send()">
+    <mat-form-field appearance="outline">
+      <mat-label>Mensaje</mat-label>
+      <textarea matInput [formControl]="reply" rows="4"></textarea>
+      @if (reply.hasError('required')) {
+        <mat-error>Escribe un mensaje</mat-error>
+      }
+    </mat-form-field>
+    <button mat-flat-button type="submit" [disabled]="sending()">
+      <mat-icon>send</mat-icon> Enviar
+    </button>
+  </form>
+}

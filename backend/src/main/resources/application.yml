@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: rt-apk-backend
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # Realm del proyecto en Keycloak, p. ej. https://keycloak.example.org/realms/rt-apk
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:}
+          # El token debe incluir aud=rt-api (audience mapper en el client del frontend)
+          audiences: ${KEYCLOAK_AUDIENCE:rt-api}
+
+rt:
+  # rest1 = /REST/1.0 (texto plano) | rest2 = /REST/2.0 (JSON, migración futura) | demo = datos en memoria
+  api-version: ${RT_API_VERSION:rest1}
+  base-url: ${RT_BASE_URL:}
+  # Servicio propio de assets: <assets-path>/<inventario>, /<serie>/ns, /<usuario windows>/usuario
+  assets-path: ${RT_ASSETS_PATH:/REST/1.0/assets}
+  # Servicio propio: <fecha-p-path>/<inventario> devuelve Fecha_p y Pass_iz
+  fecha-p-path: ${RT_FECHA_P_PATH:/REST/1.0/fecha_p}
+  username: ${RT_USERNAME:}
+  # En Podman se monta como secret y se lee con RT_PASSWORD_FILE (ver deploy/)
+  password: ${RT_PASSWORD:}
+  password-file: ${RT_PASSWORD_FILE:}
+  time-zone: ${RT_TIME_ZONE:Europe/Madrid}
+  charset: UTF-8
+  connect-timeout: 5s
+  read-timeout: 20s
+
+app:
+  tickets:
+    # Vista de tickets: activos de esta cola actualizados desde... (expresión de fecha de RT)
+    queue: ${APP_TICKETS_QUEUE:apoyo.dpto}
+    updated-since: ${APP_TICKETS_UPDATED_SINCE:5 hours ago}
+  security:
+    # false = sin autenticación (solo para el modo demo)
+    enabled: ${APP_SECURITY_ENABLED:true}
+    # Rol de realm de Keycloak que permite ver todos los tickets (no solo los propios)
+    agent-role: ${APP_AGENT_ROLE:rt-agent}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+server:
+  port: ${SERVER_PORT:8085}
+  forward-headers-strategy: framework

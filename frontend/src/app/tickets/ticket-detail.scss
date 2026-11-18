@@ -1,0 +1,47 @@
+h1 {
+  margin-top: 8px;
+}
+
+.info {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px 24px;
+
+  dt {
+    font: var(--mat-sys-label-medium);
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  dd {
+    margin: 2px 0 0;
+  }
+}
+
+.history {
+  display: grid;
+  gap: 12px;
+}
+
+mat-card.internal {
+  background: var(--mat-sys-surface-container);
+}
+
+.content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 8px 0 0;
+}
+
+.reply {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.error {
+  color: var(--mat-sys-error);
+}

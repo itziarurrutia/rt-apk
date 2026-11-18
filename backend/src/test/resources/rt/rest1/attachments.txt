@@ -1,0 +1,28 @@
+RT/4.4.4 200 Ok
+
+id: ticket/1909547/attachments
+
+Attachments: 17899317: (Unnamed) (multipart/alternative / 0b),
+             17899318: (Unnamed) (text/plain / 393b),
+             17899319: (Unnamed) (text/html / 1.4k),
+             17899321: (Unnamed) (multipart/alternative / 0b),
+             17899322: (Unnamed) (text/plain / 1.3k),
+             17899323: (Unnamed) (text/html / 2.3k),
+             17899324: (Unnamed) (text/plain / 130b),
+             17899359: (Unnamed) (text/html / 938b),
+             17899360: (Unnamed) (multipart/alternative / 0b),
+             17899361: (Unnamed) (text/plain / 580b),
+             17899362: (Unnamed) (text/html / 938b),
+             17899832: (Unnamed) (multipart/alternative / 0b),
+             17899833: (Unnamed) (text/plain / 997b),
+             17899834: (Unnamed) (text/html / 2.3k),
+             17899835: (Unnamed) (multipart/alternative / 0b),
+             17899836: (Unnamed) (text/plain / 1k),
+             17899837: (Unnamed) (text/html / 2.3k),
+             17930862: (Unnamed) (multipart/alternative / 0b),
+             17930863: (Unnamed) (text/plain / 1.3k),
+             17930864: (Unnamed) (text/html / 3.8k),
+             17930865: (Unnamed) (multipart/alternative / 0b),
+             17930866: (Unnamed) (text/plain / 1.4k),
+             17930867: (Unnamed) (text/html / 3.7k)
+

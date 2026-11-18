@@ -1,0 +1,31 @@
+RT/4.4.4 200 Ok
+
+id: ticket/1909547
+Queue: apoyo.dpto
+Owner: david.blasco
+Creator: usuario.ejemplo@example.org
+Subject: Problema con sistema de impresión
+Status: new
+Priority: 10
+InitialPriority: 10
+FinalPriority: 99
+Requestors: usuario.ejemplo@example.org
+Cc:
+AdminCc: david.blasco@example.org
+Created: 2026-11-05 09:14:26
+Starts: No establecido
+Started: No establecido
+Due: 2026-11-10 09:14:26
+Resolved: No establecido
+Told: No establecido
+LastUpdated: 2026-11-09 09:07:50
+TimeEstimated: 0
+TimeWorked: 0
+TimeLeft: 0
+CF.{NDepartamento}: Economia
+CF.{SO}:
+CF.{Inventario}: usuario.ejemplo@example.org
+CF.{version SO}:
+CF.{Tipo de incidencia}:
+CF.{Departure}:
+

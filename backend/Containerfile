@@ -1,0 +1,17 @@
+# Imagen del backend. Construir desde la carpeta backend/:
+#   podman build -t rt-apk-backend:latest .
+
+FROM docker.io/library/maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /src
+COPY pom.xml .
+RUN mvn -B -ntp dependency:go-offline
+COPY src ./src
+RUN mvn -B -ntp package
+
+FROM docker.io/library/eclipse-temurin:21-jre
+RUN useradd --system --uid 10001 --no-create-home app
+WORKDIR /app
+COPY --from=build /src/target/rt-apk-backend-*.jar app.jar
+USER 10001
+EXPOSE 8085
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "/app/app.jar"]

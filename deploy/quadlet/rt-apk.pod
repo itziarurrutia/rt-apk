@@ -1,0 +1,8 @@
+# Pod que agrupa nginx (frontend + proxy /api) y el backend. Comparten red: nginx llega al
+# backend por 127.0.0.1:8085.
+[Pod]
+PodName=rt-apk
+# Web (frontend + /api)
+PublishPort=8080:80
+# Backend directo, p. ej. para la futura APK o pruebas con curl. Quitar si solo se accede vía nginx
+PublishPort=8085:8085

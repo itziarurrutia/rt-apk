@@ -1,0 +1,13 @@
+[Unit]
+Description=rt-apk web (nginx: frontend Angular + proxy /api)
+
+[Container]
+ContainerName=rt-apk-web
+Image=localhost/rt-apk-web:latest
+Pod=rt-apk.pod
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

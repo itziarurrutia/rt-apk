@@ -1,0 +1,72 @@
+RT/4.4.4 200 Ok
+
+id: ticket/1908964
+Queue: assets.sobremesas-dpto
+Subject: eim-dpt-78763
+Status: new
+CF.{Sufijo DNS}: dyc.a.unavarra.es (DA)
+CF.{Mac eth0}: 30C599728B91
+CF.{Ip eth0}: 172.18.215.244
+CF.{Marca}: TTL
+CF.{Modelo}: TeknoPro Q870
+CF.{Numero de inventario}: 78763
+CF.{Numero de serie}: 1236718
+CF.{Fecha de compra}: 2026/11/06
+CF.{Garantia}: 2030/12/21
+CF.{Fecha_p}: 2026/01/31*
+CF.{Usuario Windows}: carlos.lopez
+
+--
+
+id: ticket/1908970
+Queue: assets.portatiles
+Subject: eim-port-78801
+Status: open
+CF.{Sufijo DNS}: dyc.a.unavarra.es (DA)
+CF.{Mac eth0}: 8C1645A0B2C3
+CF.{Ip eth0}: 172.18.215.12
+CF.{Marca}: Lenovo
+CF.{Modelo}: ThinkPad T14 Gen 5
+CF.{Numero de inventario}: 78801
+CF.{Numero de serie}: PF4XK21B
+CF.{Fecha de compra}: 2024/03/15
+CF.{Garantia}: 2027/03/15
+CF.{Fecha_p}: 2025/09/30
+CF.{Usuario Windows}: carlos.lopez
+
+--
+
+id: ticket/1907001
+Queue: assets.sobremesas-aulas
+Subject: aula-a12-pc07
+Status: open
+CF.{Sufijo DNS}: aulas.unavarra.es
+CF.{Mac eth0}: 001A2B3C4D5E
+CF.{Ip eth0}: 172.20.12.107
+CF.{Marca}: Dell
+CF.{Modelo}: OptiPlex 7010
+CF.{Numero de inventario}: 65012
+CF.{Numero de serie}: 9XK2L33
+CF.{Fecha de compra}: 2019/09/02
+CF.{Garantia}: 2022/09/02
+CF.{Fecha_p}:
+CF.{Usuario Windows}:
+
+--
+
+id: ticket/1907450
+Queue: assets.sobremesas-dpto
+Subject: ger-dpt-70333
+Status: open
+CF.{Sufijo DNS}: ger.a.unavarra.es (DA)
+CF.{Mac eth0}: F4390912AB77
+CF.{Ip eth0}: 172.18.40.33
+CF.{Marca}: HP
+CF.{Modelo}: EliteDesk 800 G9
+CF.{Numero de inventario}: 70333
+CF.{Numero de serie}: 78763
+CF.{Fecha de compra}: 2023/05/10
+CF.{Garantia}: 2028/05/10
+CF.{Fecha_p}: 2026/05/31
+CF.{Usuario Windows}: maria.ruiz
+

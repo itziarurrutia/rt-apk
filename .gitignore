@@ -1,0 +1,12 @@
+target/
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Configuración local con datos reales
+*.env
+!*.env.example
+
+# Volcados de error de la JVM
+hs_err_pid*.log

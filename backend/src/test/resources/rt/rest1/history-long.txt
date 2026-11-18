@@ -1,0 +1,58 @@
+RT/5.0.3 200 Ok
+
+# 3/3 (id/9001/total)
+
+id: 9001
+Ticket: 1234
+TimeTaken: 0
+Type: Create
+Field:
+OldValue:
+NewValue:
+Data:
+Description: Ticket created by ana.garcia@example.org
+Content: Hola,
+
+         desde esta mañana la VPN me da error de autenticación.
+         Gracias.
+Creator: ana.garcia@example.org
+Created: 2024-03-04 09:22:11
+Attachments:
+             12: untitled (0b)
+
+--
+
+# 3/3 (id/9002/total)
+
+id: 9002
+Ticket: 1234
+TimeTaken: 5
+Type: Comment
+Field:
+OldValue:
+NewValue:
+Data:
+Description: Comments added by jlopez
+Content: Revisar el certificado del usuario.
+Creator: jlopez
+Created: 2024-03-04 09:40:00
+Attachments:
+
+--
+
+# 3/3 (id/9003/total)
+
+id: 9003
+Ticket: 1234
+TimeTaken: 10
+Type: Correspond
+Field:
+OldValue:
+NewValue:
+Data:
+Description: Correspondence added by jlopez
+Content: Hola Ana, prueba a reinstalar el perfil.
+Creator: jlopez
+Created: 2024-03-05 07:01:59
+Attachments:
+
