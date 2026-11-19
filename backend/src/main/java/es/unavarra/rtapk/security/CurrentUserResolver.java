@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class CurrentUserResolver {
 
     /** Usuario fijo cuando la seguridad está desactivada (perfil demo): agente, lo ve todo. */
-    static final CurrentUser DEMO_USER = new CurrentUser("demo@example.org", "Usuario demo", true);
+    static final CurrentUser DEMO_USER = new CurrentUser("demo", "demo@example.org", "Usuario demo", true);
 
     private final boolean securityEnabled;
     private final String agentAuthority;
@@ -28,14 +28,23 @@ public class CurrentUserResolver {
         if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwt)) {
             throw new AccessDeniedException("Se requiere un token JWT");
         }
-        String email = jwt.getClaimAsString("email");
-        if (email == null || email.isBlank()) {
-            // Sin email no se puede filtrar por solicitante en RT
-            throw new AccessDeniedException("El token no contiene el claim email");
+        // Los usuarios entran con nombre de usuario; el correo es opcional
+        String email = blankToNull(jwt.getClaimAsString("email"));
+        String username = firstNonNull(blankToNull(jwt.getClaimAsString("preferred_username")), email);
+        if (username == null) {
+            throw new AccessDeniedException("El token no identifica al usuario (preferred_username)");
         }
         boolean agent = authentication.getAuthorities().stream()
                 .anyMatch(a -> agentAuthority.equals(a.getAuthority()));
-        String name = jwt.hasClaim("name") ? jwt.getClaimAsString("name") : email;
-        return new CurrentUser(email, name, agent);
+        String name = firstNonNull(blankToNull(jwt.getClaimAsString("name")), username);
+        return new CurrentUser(username, email, name, agent);
+    }
+
+    private static String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
+    }
+
+    private static String firstNonNull(String a, String b) {
+        return a != null ? a : b;
     }
 }

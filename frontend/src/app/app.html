@@ -10,6 +10,14 @@
       </a>
     }
   </nav>
+  @if (auth.enabled()) {
+    <div class="user">
+      <span class="user-name" [title]="auth.username() ?? ''">{{ auth.displayName() }}</span>
+      <button mat-icon-button type="button" (click)="auth.logout()" aria-label="Cerrar sesión" title="Cerrar sesión">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  }
 </mat-toolbar>
 
 <main>

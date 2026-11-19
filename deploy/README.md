@@ -60,11 +60,13 @@ podman build -t rt-apk-web:latest frontend/ && systemctl --user restart rt-apk-w
    ```bash
    printf '%s' 'CONTRASEÑA_DE_RT' | podman secret create rt-apk-rt-password -
    ```
-3. Keycloak: crea el realm `rt-apk` y dentro:
+3. Keycloak: crea el realm `rt-mobile` y dentro:
    - **Client `rt-web`** (frontend web y, más adelante, la APK): Client authentication **Off** (público),
      Standard flow **On**, Direct access grants **Off**, PKCE **S256**,
      Valid redirect URIs `https://tu-dominio/*` y `http://localhost:4200/*`, Web origins equivalentes.
    - En `rt-web-dedicated` añade un mapper **Audience** con custom audience `rt-api` en el access token.
    - **Realm role `rt-agent`** para los técnicos que deben ver todos los tickets.
    - El access token debe llevar `email` y coincidir con el email del usuario en RT.
-4. En el frontend hay que añadir el login (pendiente: librería OIDC + interceptor del token).
+4. El frontend lee `GET /api/config` al arrancar y, si la seguridad está activa, redirige al login de
+   Keycloak (keycloak-js, PKCE S256) y añade el token a cada llamada. Client por defecto `rt-web`
+   (`KEYCLOAK_CLIENT_ID`).

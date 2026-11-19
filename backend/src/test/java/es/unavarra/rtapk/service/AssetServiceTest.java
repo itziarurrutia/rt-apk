@@ -59,8 +59,8 @@ class AssetServiceTest {
 
     @Test
     void passIzOnlyForAgents() {
-        CurrentUser agent = new CurrentUser("tecnico@example.org", "Técnico", true);
-        CurrentUser user = new CurrentUser("ana@example.org", "Ana", false);
+        CurrentUser agent = new CurrentUser("tecnico", "tecnico@example.org", "Técnico", true);
+        CurrentUser user = new CurrentUser("ana", "ana@example.org", "Ana", false);
 
         // Pass_iz demo de 78763: "demo-36787{X%9}Qa7#kP2"
         assertThat(service.getPassIz(agent, "78763")).isEqualTo(new PassIz("demo-36787{X%9}Qa7#kP2", "7{X%9}Qa7"));

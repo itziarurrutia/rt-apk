@@ -24,6 +24,13 @@ class DemoProfileTest {
     MockMvc mvc;
 
     @Test
+    void publicConfigSaysNoLoginIsNeeded() throws Exception {
+        mvc.perform(get("/api/config"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.securityEnabled").value(false));
+    }
+
+    @Test
     void searchesAssetsWithoutAuthentication() throws Exception {
         mvc.perform(get("/api/assets").param("q", "78763"))
                 .andExpect(status().isOk())

@@ -25,13 +25,17 @@ public class TicketService {
     }
 
     public List<Ticket> search(CurrentUser user, TicketQuery query) {
+        if (!user.agent() && !user.hasEmail()) {
+            // Sin correo no se puede saber de qué tickets es solicitante
+            return List.of();
+        }
         TicketQuery scoped = user.agent() ? query : query.withRequestor(user.email());
         return rt.findTickets(scoped);
     }
 
     public Ticket get(CurrentUser user, long id) {
         Ticket ticket = rt.getTicket(id);
-        if (!user.agent() && !ticket.hasRequestor(user.email())) {
+        if (!user.agent() && !(user.hasEmail() && ticket.hasRequestor(user.email()))) {
             // 404 y no 403 para no revelar qué tickets existen
             throw new TicketNotFoundException(id);
         }
@@ -47,6 +51,6 @@ public class TicketService {
     public void reply(CurrentUser user, long id, String text) {
         get(user, id);
         // En RT la respuesta figura como enviada por la cuenta de servicio: se deja constancia del autor real
-        rt.addReply(id, text.strip() + "\n\n-- \nEnviado por " + user.name() + " <" + user.email() + "> desde rt-apk");
+        rt.addReply(id, text.strip() + "\n\n-- \nEnviado por " + user.name() + " (" + user.username() + ") desde rt-apk");
     }
 }

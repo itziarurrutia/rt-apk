@@ -24,6 +24,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -37,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TicketController.class)
+@WebMvcTest({TicketController.class, PublicConfigController.class})
 @Import({SecurityConfig.class, KeycloakJwtAuthenticationConverter.class, CurrentUserResolver.class,
         TicketService.class, ApiExceptionHandler.class})
 class TicketControllerTest {
@@ -54,16 +55,26 @@ class TicketControllerTest {
     private JwtDecoder jwtDecoder;
 
     private static RequestPostProcessor user(String email) {
-        return jwt().jwt(j -> j.claim("email", email).claim("name", "Ana García"));
+        return jwt().jwt(j -> j.claim("preferred_username", "ana.garcia").claim("email", email).claim("name", "Ana García"));
     }
 
     private static RequestPostProcessor agent(String email) {
-        return jwt().jwt(j -> j.claim("email", email)).authorities(new SimpleGrantedAuthority("ROLE_rt-agent"));
+        return jwt().jwt(j -> j.claim("preferred_username", "tecnico").claim("email", email))
+                .authorities(new SimpleGrantedAuthority("ROLE_rt-agent"));
     }
 
     private static Ticket ticket(long id, String requestor) {
         return new Ticket(id, "Asunto " + id, "Soporte", "open", "Nobody", List.of(requestor), 0,
                 OffsetDateTime.parse("2024-03-04T10:22:11+01:00"), null, Map.of());
+    }
+
+    @Test
+    void publicConfigDoesNotRequireToken() throws Exception {
+        mvc.perform(get("/api/config"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.securityEnabled").value(true))
+                .andExpect(jsonPath("$.issuer").value("http://localhost:8180/realms/rt-mobile"))
+                .andExpect(jsonPath("$.clientId").value("rt-web"));
     }
 
     @Test
@@ -122,7 +133,7 @@ class TicketControllerTest {
                         .content("{\"text\":\"Ya funciona\"}"))
                 .andExpect(status().isNoContent());
 
-        verify(rt).addReply(eq(1L), argThat(text -> text.startsWith("Ya funciona") && text.contains("<" + ANA + ">")));
+        verify(rt).addReply(eq(1L), argThat(text -> text.startsWith("Ya funciona") && text.contains("Enviado por Ana García (ana.garcia)")));
     }
 
     @Test
@@ -145,8 +156,27 @@ class TicketControllerTest {
     }
 
     @Test
-    void tokenWithoutEmailIsForbidden() throws Exception {
-        mvc.perform(get("/api/me").with(jwt())).andExpect(status().isForbidden());
+    void tokenWithoutUserIsForbidden() throws Exception {
+        mvc.perform(get("/api/me").with(jwt()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void userWithoutEmailIsIdentifiedByUsername() throws Exception {
+        mvc.perform(get("/api/me").with(jwt().jwt(j -> j.claim("preferred_username", "itziar"))
+                        .authorities(new SimpleGrantedAuthority("ROLE_rt-agent"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("itziar"))
+                .andExpect(jsonPath("$.email").doesNotExist())
+                .andExpect(jsonPath("$.agent").value(true));
+    }
+
+    @Test
+    void userWithoutEmailSeesNoOwnTickets() throws Exception {
+        mvc.perform(get("/api/tickets").with(jwt().jwt(j -> j.claim("preferred_username", "itziar"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+        verify(rt, never()).findTickets(any());
     }
 
     @Test

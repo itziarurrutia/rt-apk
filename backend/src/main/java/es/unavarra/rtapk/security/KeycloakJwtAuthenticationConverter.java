@@ -14,14 +14,14 @@ import java.util.Map;
 
 /**
  * Convierte los roles de realm de Keycloak ({@code realm_access.roles}) en authorities {@code ROLE_<rol>}
- * y usa el email como nombre del usuario autenticado.
+ * y usa el nombre de usuario ({@code preferred_username}) como nombre del usuario autenticado.
  */
 @Component
 public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
-        String name = jwt.hasClaim("email") ? jwt.getClaimAsString("email") : jwt.getClaimAsString("preferred_username");
+        String name = jwt.hasClaim("preferred_username") ? jwt.getClaimAsString("preferred_username") : jwt.getClaimAsString("email");
         return new JwtAuthenticationToken(jwt, realmRoles(jwt), name);
     }
 

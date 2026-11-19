@@ -9,7 +9,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          # Realm del proyecto en Keycloak, p. ej. https://keycloak.example.org/realms/rt-apk
+          # Realm del proyecto en Keycloak, p. ej. https://keycloak.example.org/realms/rt-mobile
           issuer-uri: ${KEYCLOAK_ISSUER_URI:}
           # El token debe incluir aud=rt-api (audience mapper en el client del frontend)
           audiences: ${KEYCLOAK_AUDIENCE:rt-api}
@@ -49,6 +49,8 @@ app:
     enabled: ${APP_SECURITY_ENABLED:true}
     # Rol de realm de Keycloak que permite ver todos los tickets (no solo los propios)
     agent-role: ${APP_AGENT_ROLE:rt-agent}
+    # Client público de Keycloak con el que el frontend pide el login (PKCE)
+    client-id: ${KEYCLOAK_CLIENT_ID:rt-web}
 
 management:
   endpoints:

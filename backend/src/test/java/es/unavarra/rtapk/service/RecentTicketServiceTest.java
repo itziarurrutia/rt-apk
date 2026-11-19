@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 class RecentTicketServiceTest {
 
-    private static final CurrentUser AGENT = new CurrentUser("tecnico@example.org", "Técnico", true);
+    private static final CurrentUser AGENT = new CurrentUser("tecnico", "tecnico@example.org", "Técnico", true);
     private static final OffsetDateTime UPDATED = OffsetDateTime.parse("2026-11-09T09:07:50+01:00");
 
     private final RtGateway rt = mock(RtGateway.class);
@@ -85,7 +85,7 @@ class RecentTicketServiceTest {
 
     @Test
     void onlyForAgents() {
-        CurrentUser user = new CurrentUser("ana@example.org", "Ana", false);
+        CurrentUser user = new CurrentUser("ana", "ana@example.org", "Ana", false);
 
         assertThatThrownBy(() -> service.recent(user)).isInstanceOf(AccessDeniedException.class);
         verify(rt, never()).findRecentActive("apoyo.dpto", "5 hours ago");

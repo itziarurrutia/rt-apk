@@ -53,7 +53,9 @@ export interface TicketHistoryEntry {
 }
 
 export interface CurrentUser {
-  email: string;
+  username: string;
+  /** Opcional: los usuarios de Keycloak entran con nombre de usuario. */
+  email: string | null;
   name: string;
   agent: boolean;
 }

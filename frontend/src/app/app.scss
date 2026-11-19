@@ -25,6 +25,22 @@
   font: var(--mat-sys-title-large);
 }
 
+.user {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  min-width: 0;
+  font: var(--mat-sys-body-medium);
+}
+
+.user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 40vw;
+}
+
 .top-nav {
   display: flex;
   gap: 4px;

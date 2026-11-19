@@ -4,7 +4,7 @@ Portal web responsive (y, más adelante, app Android) para consultar equipos (as
 Request Tracker (RT), con autenticación de Keycloak.
 
 ```
-Navegador / APK ──OIDC + PKCE──▶ Keycloak (realm rt-apk)          [pendiente]
+Navegador / APK ──OIDC + PKCE──▶ Keycloak (realm rt-mobile)
       │ Bearer JWT
       ▼
 nginx :80 (pod Podman) ──/api──▶ backend Spring Boot :8085 ──usuario/contraseña──▶ RT (texto plano REST 1.0)
