@@ -57,11 +57,22 @@ Abre http://localhost:4200. Datos demo para probar el buscador de equipos:
 
 - Puertos (interfaces) de acceso a RT; el resto de la aplicación solo los conoce a ellos:
   - `rt/AssetGateway`: equipos. `Rest1AssetGateway` usa el servicio de assets de RT
-    (`rt.assets-path`): `/<inventario>`, `/<serie>/ns` y `/<usuario windows>/usuario`.
+    (`rt.assets-path`, por defecto `/asset`): `/asset/<inventario>/default`, `/asset/<serie>/ns` y `/asset/<usuario windows>/usuario`.
   - `rt/RtGateway`: tickets. `Rest1RtGateway` (REST 1.0) y `Rest2RtGateway` (vacío, para la migración).
   - `rt/demo`: implementaciones en memoria con los datos de `src/main/resources/demo/`.
   - `RT_API_VERSION=rest1|rest2|demo` elige la implementación.
-- `rt/rest1/Rest1Client`: login con usuario/contraseña, cookie de sesión (repite el login si caduca).
+- Conexión a RT con tres variables: `RT_URL` (URL base del REST, p. ej. `https://rt.example.org/REST/1.0`),
+  `RT_USERNAME` y `RT_PASSWORD`. `rt/RtCredentialsInterceptor` añade `user=...&pass=...` a cada petición,
+  como en `Invoke-WebRequest -Uri ($url + $q + "&user=...&pass=...")`; no hay login ni cookie de sesión.
+  Los mensajes de error ocultan la contraseña (`pass=***`).
+- Certificado caducado (rt5): `RT_TLS_PINNED_SHA256` acepta un certificado concreto por su huella SHA-256
+  aunque esté caducado o tenga otro nombre (`rt/PinnedCertificateTrustManager`). Cualquier otro
+  certificado se valida normal, así que no se desactiva la seguridad TLS. Cuando renueven el
+  certificado, la huella cambia: hay que actualizarla o quitarla.
+- En local, esos valores se ponen en `backend/rt.yml`, que **no se sube a git** (`.gitignore`):
+  `cp backend/rt.yml.example backend/rt.yml` y rellenar. Otra ubicación: `RT_CONFIG_FILE`. Las
+  variables de entorno tienen prioridad sobre el fichero. Para usar el RT real arranca sin el perfil
+  `demo`: `./mvnw spring-boot:run` (desde `backend/`); sin Keycloak, añade `APP_SECURITY_ENABLED: false`.
 - `rt/rest1/Rest1ResponseParser`: parser del texto plano de RT (estado, bloques `--`, multilínea, `CF.{...}`).
 - `service/AssetService`: búsqueda con un único texto. Si es numérico se busca como nº de inventario y
   nº de serie; si no, como usuario de Windows y nº de serie. Se juntan los resultados indicando por qué
@@ -77,8 +88,8 @@ Abre http://localhost:4200. Datos demo para probar el buscador de equipos:
 |---|---|---|
 | GET | `/api/assets?q=78763` | Busca equipos por nº de inventario, nº de serie o usuario de Windows |
 | GET | `/api/assets/{inventario}` | Detalle de un equipo |
-| GET | `/api/assets/{inventario}/pass-iz` | `{"passIz", "fragmento"}` de `<RT>/REST/1.0/fecha_p/<inventario>` (`RT_FECHA_P_PATH`); `fragmento` = caracteres 10 a 18. Solo rol `rt-agent`, `Cache-Control: no-store`. En la web: switch junto a Fecha P y ojo que, mantenido pulsado, muestra el fragmento |
-| GET | `/api/tickets/recientes` | Tickets activos de `APP_TICKETS_QUEUE` (`apoyo.dpto`) actualizados en `APP_TICKETS_UPDATED_SINCE` (`5 hours ago`), con solicitante, departamento y último mensaje. Solo rol `rt-agent` |
+| GET | `/api/assets/{inventario}/pass-iz` | `{"passIz", "fragmento"}` de `<RT_URL>/fecha_p/<inventario>` (`RT_FECHA_P_PATH`); `fragmento` = caracteres 10 a 18. Solo rol `rt-agent`, `Cache-Control: no-store`. En la web: switch junto a Fecha P y ojo que, mantenido pulsado, muestra el fragmento |
+| GET | `/api/tickets/recientes` | Tickets activos de `APP_TICKETS_QUEUE` (`apoyo.dpto`) creados en las últimas `APP_TICKETS_HOURS` horas (5 por defecto; o una expresión de RT completa en `APP_TICKETS_UPDATED_SINCE`), con solicitante, departamento y último mensaje. Solo rol `rt-agent` |
 | GET | `/api/me` | Usuario actual |
 | GET | `/api/tickets?status=open&q=texto` | Búsqueda de tickets |
 | GET | `/api/tickets/{id}` | Detalle |
@@ -103,7 +114,9 @@ disponible).
 - Si `/usuario` puede devolver varios equipos separados por `--` (está soportado). Sin coincidencias el
   servicio responde `# Error: No existe asset` y se trata como búsqueda vacía; cualquier otro
   `# Error: ...` se devuelve como 502 (RT no disponible).
-- Si `<url_rt_rest>` del servicio de assets es `/REST/1.0/assets` (configurable con `RT_ASSETS_PATH`) y
-  si usa la misma sesión que la API REST 1.0.
+- Que los servicios propios cuelgan de la misma URL: `<RT_URL>/asset/...` y `<RT_URL>/fecha_p/...`
+  (configurables con `RT_ASSETS_PATH` y `RT_FECHA_P_PATH`).
+- La contraseña viaja en la URL de cada petición: usad `https` en `RT_URL`, y tened en cuenta que puede
+  quedar registrada en los logs de acceso del servidor de RT.
 - Los fixtures de tickets de `backend/src/test/resources/rt/rest1/` son sintéticos (el de assets es el
   vuestro).

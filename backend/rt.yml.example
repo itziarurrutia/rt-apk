@@ -1,0 +1,25 @@
+# Conexión al RT. Copiar a rt.yml (en esta carpeta, backend/) y rellenar.
+# rt.yml NO se sube a git (.gitignore). Otra ubicación: variable RT_CONFIG_FILE.
+# Las variables de entorno con el mismo nombre tienen prioridad sobre este fichero.
+#
+# Pon los valores entre comillas simples; si la contraseña lleva una comilla simple, escríbela doble ('').
+
+# URL base del REST, incluido /REST/1.0 (mejor https: la contraseña viaja en la URL)
+RT_URL: 'https://rtserver.example.org/REST/1.0'
+RT_USERNAME: 'usuario'
+RT_PASSWORD: 'contraseña'
+
+# Servidor con certificado caducado (p. ej. https://rt5.unavarra.es/REST/1.0): huella SHA-256 del
+# certificado que se acepta igualmente. Solo ese certificado exacto; el resto se valida normal.
+#   openssl s_client -connect rt5.unavarra.es:443 </dev/null | openssl x509 -noout -fingerprint -sha256
+#RT_TLS_PINNED_SHA256: '38:54:CF:C2:77:BB:BD:5D:48:65:CC:AD:D1:B8:36:8E:4B:A4:E1:3E:BE:6A:82:FA:E1:9D:63:3C:4B:E4:6F:15'
+
+# Vista de tickets: activos de la cola creados en las últimas N horas
+#APP_TICKETS_HOURS: 5
+#APP_TICKETS_QUEUE: apoyo.dpto
+
+#RT_API_VERSION: rest1
+#RT_TIME_ZONE: Europe/Madrid
+
+# Para probar contra el RT real sin Keycloak (solo en local):
+#APP_SECURITY_ENABLED: false

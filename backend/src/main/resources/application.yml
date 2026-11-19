@@ -1,6 +1,10 @@
 spring:
   application:
     name: rt-apk-backend
+  config:
+    # Datos de conexión locales (RT_URL, RT_USERNAME, RT_PASSWORD...). No se sube a git;
+    # copiar rt.yml.example a rt.yml. Las variables de entorno tienen prioridad.
+    import: optional:file:${RT_CONFIG_FILE:./rt.yml}
   security:
     oauth2:
       resourceserver:
@@ -13,25 +17,33 @@ spring:
 rt:
   # rest1 = /REST/1.0 (texto plano) | rest2 = /REST/2.0 (JSON, migración futura) | demo = datos en memoria
   api-version: ${RT_API_VERSION:rest1}
-  base-url: ${RT_BASE_URL:}
-  # Servicio propio de assets: <assets-path>/<inventario>, /<serie>/ns, /<usuario windows>/usuario
-  assets-path: ${RT_ASSETS_PATH:/REST/1.0/assets}
-  # Servicio propio: <fecha-p-path>/<inventario> devuelve Fecha_p y Pass_iz
-  fecha-p-path: ${RT_FECHA_P_PATH:/REST/1.0/fecha_p}
+  # Conexión: URL base del REST, usuario y contraseña. Cada petición lleva &user=...&pass=...
+  url: ${RT_URL:}
   username: ${RT_USERNAME:}
   # En Podman se monta como secret y se lee con RT_PASSWORD_FILE (ver deploy/)
   password: ${RT_PASSWORD:}
   password-file: ${RT_PASSWORD_FILE:}
   time-zone: ${RT_TIME_ZONE:Europe/Madrid}
+  # Rutas relativas a rt.url de los servicios propios de assets:
+  #   <assets-path>/<inventario>/default, /<serie>/ns, /<usuario windows>/usuario
+  assets-path: ${RT_ASSETS_PATH:/asset}
+  #   <fecha-p-path>/<inventario> devuelve Fecha_p y Pass_iz
+  fecha-p-path: ${RT_FECHA_P_PATH:/fecha_p}
+  tls:
+    # Huella SHA-256 (separadas por comas) de certificados aceptados aunque estén caducados o con otro
+    # nombre, p. ej. el de rt5. Vacío = validación normal de Java.
+    pinned-sha256: ${RT_TLS_PINNED_SHA256:}
   charset: UTF-8
   connect-timeout: 5s
   read-timeout: 20s
 
 app:
   tickets:
-    # Vista de tickets: activos de esta cola actualizados desde... (expresión de fecha de RT)
+    # Vista de tickets: activos de esta cola creados en las últimas N horas
     queue: ${APP_TICKETS_QUEUE:apoyo.dpto}
-    updated-since: ${APP_TICKETS_UPDATED_SINCE:5 hours ago}
+    hours: ${APP_TICKETS_HOURS:5}
+    # Expresión de fecha de RT; por defecto "<hours> hours ago". Se puede sustituir entera (p. ej. "2 days ago")
+    updated-since: ${APP_TICKETS_UPDATED_SINCE:${app.tickets.hours} hours ago}
   security:
     # false = sin autenticación (solo para el modo demo)
     enabled: ${APP_SECURITY_ENABLED:true}

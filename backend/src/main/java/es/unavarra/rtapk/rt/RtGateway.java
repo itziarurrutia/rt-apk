@@ -16,7 +16,7 @@ public interface RtGateway {
 
     List<Ticket> findTickets(TicketQuery query);
 
-    /** Tickets activos de la cola actualizados desde {@code updatedSince} (expresión de RT, p. ej. "5 hours ago"). */
+    /** Tickets activos de la cola creados desde {@code updatedSince} (expresión de RT, p. ej. "5 hours ago"). */
     List<TicketRef> findRecentActive(String queue, String updatedSince);
 
     /** @throws es.unavarra.rtapk.domain.TicketNotFoundException si el ticket no existe */

@@ -20,9 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static es.unavarra.rtapk.rt.rest1.Rest1Client.BASE;
-
-/** Adaptador de tickets para la API REST 1.0 de RT ({@code /REST/1.0}), que responde en texto plano. */
+/** Adaptador de tickets para la API REST 1.0 de RT (rutas relativas a {@code rt.url}), que responde en texto plano. */
 @Component
 @ConditionalOnProperty(name = "rt.api-version", havingValue = "rest1", matchIfMissing = true)
 public class Rest1RtGateway implements RtGateway {
@@ -44,7 +42,7 @@ public class Rest1RtGateway implements RtGateway {
     @Override
     public List<Ticket> findTickets(TicketQuery query) {
         String sql = TicketSqlBuilder.build(query);
-        Rest1Response response = client.call(c -> c.get().uri(b -> b.path(BASE + "/search/ticket")
+        Rest1Response response = client.call(c -> c.get().uri(b -> b.path("/search/ticket")
                 .queryParam("query", "{query}")
                 .queryParam("orderby", "-LastUpdated")
                 .queryParam("format", "l")
@@ -56,7 +54,7 @@ public class Rest1RtGateway implements RtGateway {
     @Override
     public List<TicketRef> findRecentActive(String queue, String updatedSince) {
         String sql = TicketSqlBuilder.recentActive(queue, updatedSince);
-        Rest1Response response = client.call(c -> c.get().uri(b -> b.path(BASE + "/search/ticket")
+        Rest1Response response = client.call(c -> c.get().uri(b -> b.path("/search/ticket")
                 .queryParam("query", "{query}")
                 .build(sql)));
         // Formato corto "1909547: Asunto": al empezar por un número el parser deja esas líneas como comentarios
@@ -69,7 +67,7 @@ public class Rest1RtGateway implements RtGateway {
 
     @Override
     public Ticket getTicket(long id) {
-        Rest1Response response = client.call(c -> c.get().uri(BASE + "/ticket/{id}/show", id));
+        Rest1Response response = client.call(c -> c.get().uri("/ticket/{id}/show", id));
         failIfMissing(response, id);
         return response.dataRecords().stream().findFirst().map(mapper::toTicket)
                 .orElseThrow(() -> new TicketNotFoundException(id));
@@ -77,7 +75,7 @@ public class Rest1RtGateway implements RtGateway {
 
     @Override
     public List<TicketHistoryEntry> getHistory(long ticketId) {
-        Rest1Response response = client.call(c -> c.get().uri(b -> b.path(BASE + "/ticket/{id}/history")
+        Rest1Response response = client.call(c -> c.get().uri(b -> b.path("/ticket/{id}/history")
                 .queryParam("format", "l")
                 .build(ticketId)));
         failIfMissing(response, ticketId);
@@ -86,7 +84,7 @@ public class Rest1RtGateway implements RtGateway {
 
     @Override
     public List<AttachmentRef> getAttachments(long ticketId) {
-        Rest1Response response = client.call(c -> c.get().uri(BASE + "/ticket/{id}/attachments", ticketId));
+        Rest1Response response = client.call(c -> c.get().uri("/ticket/{id}/attachments", ticketId));
         failIfMissing(response, ticketId);
         String list = response.dataRecords().stream().findFirst()
                 .flatMap(r -> r.field("Attachments")).orElse("");
@@ -101,7 +99,7 @@ public class Rest1RtGateway implements RtGateway {
 
     @Override
     public String getAttachmentContent(long attachmentId) {
-        Rest1Response response = client.call(c -> c.get().uri(BASE + "/attachment/{id}", attachmentId));
+        Rest1Response response = client.call(c -> c.get().uri("/attachment/{id}", attachmentId));
         return response.dataRecords().stream().findFirst().flatMap(r -> r.field("Content")).orElse(null);
     }
 
@@ -109,7 +107,7 @@ public class Rest1RtGateway implements RtGateway {
     public void addReply(long ticketId, String text) {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("content", "id: " + ticketId + "\nAction: correspond\nText: " + indentContinuation(text));
-        Rest1Response response = client.call(c -> c.post().uri(BASE + "/ticket/{id}/comment", ticketId)
+        Rest1Response response = client.call(c -> c.post().uri("/ticket/{id}/comment", ticketId)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(form));
         failIfMissing(response, ticketId);

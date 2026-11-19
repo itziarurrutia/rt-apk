@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Adaptador de los servicios propios de assets de RT, que responden en formato REST 1.0:
  * <ul>
- *   <li>{@code GET <assets-path>/<numero_inventario>}</li>
+ *   <li>{@code GET <assets-path>/<numero_inventario>/default}</li>
  *   <li>{@code GET <assets-path>/<numero_serie>/ns}</li>
  *   <li>{@code GET <assets-path>/<usuario_windows>/usuario}</li>
  *   <li>{@code GET <fecha-p-path>/<numero_inventario>} (campos {@code Fecha_p} y {@code Pass_iz})</li>
@@ -42,7 +42,7 @@ public class Rest1AssetGateway implements AssetGateway {
     @Override
     public List<Asset> find(AssetSearchField field, String value) {
         String template = switch (field) {
-            case INVENTARIO -> assetsPath + "/{value}";
+            case INVENTARIO -> assetsPath + "/{value}/default";
             case SERIE -> assetsPath + "/{value}/ns";
             case USUARIO_WINDOWS -> assetsPath + "/{value}/usuario";
         };

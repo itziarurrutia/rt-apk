@@ -3,7 +3,7 @@
     <h1>Tickets</h1>
     @if (data(); as d) {
       <p class="subtitle">
-        Cola <strong>{{ d.cola }}</strong> · activos · actualizados {{ since() }}
+        Cola <strong>{{ d.cola }}</strong> · activos · creados {{ since() }}
       </p>
     }
   </div>
@@ -21,7 +21,7 @@
 
 @if (data(); as d) {
   @if (d.tickets.length === 0) {
-    <p class="empty">No hay tickets activos actualizados {{ since() }}.</p>
+    <p class="empty">No hay tickets activos creados {{ since() }}.</p>
   }
 
   <div class="list">

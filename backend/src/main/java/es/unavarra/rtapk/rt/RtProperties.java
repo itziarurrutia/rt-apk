@@ -12,9 +12,15 @@ import java.time.Duration;
 import java.time.ZoneId;
 
 @ConfigurationProperties(prefix = "rt")
+/**
+ * Conexión a RT.
+ *
+ * @param url URL base del REST de RT, p. ej. {@code https://rt.example.org/REST/1.0}; las rutas de las
+ *            consultas ({@code search/ticket}, {@code ticket/<id>}, {@code assets/<inventario>}...) cuelgan de ella
+ */
 public record RtProperties(
         String apiVersion,
-        String baseUrl,
+        String url,
         String assetsPath,
         String fechaPPath,
         String username,

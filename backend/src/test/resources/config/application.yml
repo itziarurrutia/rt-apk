@@ -1,5 +1,5 @@
 # Valores para los tests (sustituyen a las variables de entorno de producción)
 KEYCLOAK_ISSUER_URI: http://localhost:8180/realms/rt-apk
-RT_BASE_URL: http://localhost:9999
+RT_URL: http://localhost:9999/REST/1.0
 RT_USERNAME: test
 RT_PASSWORD: test

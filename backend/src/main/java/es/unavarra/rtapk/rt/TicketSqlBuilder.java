@@ -36,9 +36,9 @@ public final class TicketSqlBuilder {
         return clauses.isEmpty() ? "id > 0" : String.join(" AND ", clauses);
     }
 
-    /** "(Queue = 'apoyo.dpto' AND LastUpdated > '5 hours ago' AND Status = '__Active__')" */
+    /** "(Queue = 'apoyo.dpto' AND Created > '5 hours ago' AND Status = '__Active__')" */
     public static String recentActive(String queue, String updatedSince) {
-        return "(Queue = " + quote(queue) + " AND LastUpdated > " + quote(updatedSince)
+        return "(Queue = " + quote(queue) + " AND Created > " + quote(updatedSince)
                 + " AND Status = '__Active__')";
     }
 
