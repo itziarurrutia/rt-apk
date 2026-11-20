@@ -1,5 +1,5 @@
-# Conexión al RT. Copiar a rt.yml (en esta carpeta, backend/) y rellenar.
-# rt.yml NO se sube a git (.gitignore). Otra ubicación: variable RT_CONFIG_FILE.
+# Conexión al RT. Copiar a application-security.yml (en esta carpeta, backend/) y rellenar.
+# application-security.yml NO se sube a git (.gitignore). Otra ubicación: variable RT_CONFIG_FILE.
 # Las variables de entorno con el mismo nombre tienen prioridad sobre este fichero.
 #
 # Pon los valores entre comillas simples; si la contraseña lleva una comilla simple, escríbela doble ('').

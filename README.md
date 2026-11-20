@@ -46,6 +46,22 @@ Abre http://localhost:4200. Datos demo para probar el buscador de equipos:
 | `PF4XK21B` | Nº de serie alfanumérico |
 | `65012` | Equipo fuera de garantía y sin usuario |
 
+### Web y API en un solo puerto
+
+El perfil Maven `frontend` compila Angular (`npm ci` + `npm run build`) y lo mete en `static/` del JAR, así
+que el backend sirve también la web en el 8085 (las rutas de Angular, p. ej. `/tickets/123`, devuelven
+`index.html`; `/api/**` sigue pidiendo token):
+
+```bash
+cd backend
+./mvnw -Pfrontend package            # -Dfrontend.npm-install=install para no reinstalar node_modules
+java -jar target/rt-apk-backend-0.1.0-SNAPSHOT.jar
+```
+
+Abre http://localhost:8085. En Keycloak, el cliente `rt-web` debe tener `http://localhost:8085/*` en
+*Valid redirect URIs* y `http://localhost:8085` en *Web origins* (y la URL pública donde se despliegue).
+Sin el perfil, el backend es solo API y para desarrollar se sigue usando `npm start` (4200).
+
 > **Windows:** si los tests del backend fallan con `Unable to establish loopback connection`, el JDK no
 > puede crear su socket interno en la carpeta temporal del usuario. Indícale otra carpeta:
 > `./mvnw test "-DargLine=-Djdk.net.unixdomain.tmpdir=E:/tmp"` (o define
@@ -69,8 +85,8 @@ Abre http://localhost:4200. Datos demo para probar el buscador de equipos:
   aunque esté caducado o tenga otro nombre (`rt/PinnedCertificateTrustManager`). Cualquier otro
   certificado se valida normal, así que no se desactiva la seguridad TLS. Cuando renueven el
   certificado, la huella cambia: hay que actualizarla o quitarla.
-- En local, esos valores se ponen en `backend/rt.yml`, que **no se sube a git** (`.gitignore`):
-  `cp backend/rt.yml.example backend/rt.yml` y rellenar. Otra ubicación: `RT_CONFIG_FILE`. Las
+- En local, esos valores se ponen en `backend/application-security.yml`, que **no se sube a git** (`.gitignore`):
+  `cp backend/application-security.yml.example backend/application-security.yml` y rellenar. Otra ubicación: `RT_CONFIG_FILE`. Las
   variables de entorno tienen prioridad sobre el fichero. Para usar el RT real arranca sin el perfil
   `demo`: `./mvnw spring-boot:run` (desde `backend/`); sin Keycloak, añade `APP_SECURITY_ENABLED: false`.
 - `rt/rest1/Rest1ResponseParser`: parser del texto plano de RT (estado, bloques `--`, multilínea, `CF.{...}`).

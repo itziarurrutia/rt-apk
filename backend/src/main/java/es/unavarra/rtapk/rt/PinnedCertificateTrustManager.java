@@ -3,11 +3,9 @@ package es.unavarra.rtapk.rt;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509ExtendedTrustManager;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -36,14 +34,8 @@ public final class PinnedCertificateTrustManager extends X509ExtendedTrustManage
     /** SSLContext con la validación de Java más las huellas indicadas (separadas por comas). */
     public static SSLContext sslContext(String sha256Pins) {
         try {
-            TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            factory.init((KeyStore) null);
-            X509ExtendedTrustManager defaults = null;
-            for (TrustManager tm : factory.getTrustManagers()) {
-                if (tm instanceof X509ExtendedTrustManager x) {
-                    defaults = x;
-                }
-            }
+            // Java más las CA de app.tls.trusted-ca (Unavarra CA2)
+            X509ExtendedTrustManager defaults = es.unavarra.rtapk.tls.TrustedCertificates.defaultTrustManager();
             Set<String> pins = Set.of(sha256Pins.split("\\s*,\\s*"));
             SSLContext context = SSLContext.getInstance("TLS");
             context.init(null, new TrustManager[] {new PinnedCertificateTrustManager(pins, defaults)}, null);

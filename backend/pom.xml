@@ -20,6 +20,10 @@
     <properties>
         <java.version>21</java.version>
         <springdoc.version>3.2.0</springdoc.version>
+        <!-- Perfil "frontend": compila el Angular de ../frontend y lo sirve desde el propio backend -->
+        <frontend.dir>${project.basedir}/../frontend</frontend.dir>
+        <npm.executable>npm</npm.executable>
+        <frontend.npm-install>ci</frontend.npm-install>
     </properties>
 
     <dependencies>
@@ -77,11 +81,96 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemPropertyVariables>
-                        <!-- Los tests no leen el rt.yml local del desarrollador (datos reales) -->
+                        <!-- Los tests no leen el application-security.yml local del desarrollador (datos reales) -->
                         <RT_CONFIG_FILE>target/rt-no-existe.yml</RT_CONFIG_FILE>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            ./mvnw -Pfrontend package : compila el frontend (npm ci + npm run build) y copia el resultado a
+            static/ del JAR, de modo que web y API se sirven en el mismo puerto (8085). Sin este perfil el
+            backend es solo API y el frontend se sirve aparte (ng serve en desarrollo, nginx en deploy/).
+            -Dfrontend.npm-install=install evita reinstalar node_modules desde cero en cada build.
+        -->
+        <profile>
+            <id>frontend</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>npm-install</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${npm.executable}</executable>
+                                    <workingDirectory>${frontend.dir}</workingDirectory>
+                                    <arguments>
+                                        <argument>${frontend.npm-install}</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>npm-build</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${npm.executable}</executable>
+                                    <workingDirectory>${frontend.dir}</workingDirectory>
+                                    <arguments>
+                                        <argument>run</argument>
+                                        <argument>build</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-frontend</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${frontend.dir}/dist/frontend/browser</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- En Windows npm es un .cmd -->
+        <profile>
+            <id>npm-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <npm.executable>npm.cmd</npm.executable>
+            </properties>
+        </profile>
+    </profiles>
 </project>

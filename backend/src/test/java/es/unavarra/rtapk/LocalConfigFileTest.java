@@ -9,7 +9,7 @@ import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Los datos de conexión se pueden leer de un fichero local (rt.yml, fuera de git). */
+/** Los datos de conexión se pueden leer de un fichero local (application-security.yml, fuera de git). */
 @SpringBootTest(properties = "RT_CONFIG_FILE=src/test/resources/local/rt-test.yml")
 class LocalConfigFileTest {
 

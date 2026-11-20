@@ -3,8 +3,8 @@ spring:
     name: rt-apk-backend
   config:
     # Datos de conexión locales (RT_URL, RT_USERNAME, RT_PASSWORD...). No se sube a git;
-    # copiar rt.yml.example a rt.yml. Las variables de entorno tienen prioridad.
-    import: optional:file:${RT_CONFIG_FILE:./rt.yml}
+    # copiar application-security.yml.example a application-security.yml. Las variables de entorno tienen prioridad.
+    import: optional:file:${RT_CONFIG_FILE:./application-security.yml}
   security:
     oauth2:
       resourceserver:
@@ -38,13 +38,17 @@ rt:
   read-timeout: 20s
 
 app:
+  tls:
+    # CA adicionales de confianza (PEM, separadas por comas). Unavarra CA2 firma los certificados de
+    # Keycloak (baobab2) y rt5, y Java no la trae. Vacío = solo los certificados de Java.
+    trusted-ca: ${APP_TLS_TRUSTED_CA:classpath:tls/unavarra-ca2.pem}
   tickets:
     # Vista de tickets: activos de esta cola creados en las últimas N horas
     queue: ${APP_TICKETS_QUEUE:apoyo.dpto}
     hours: ${APP_TICKETS_HOURS:5}
     # Expresión de fecha de RT; por defecto "<hours> hours ago". Se puede sustituir entera (p. ej. "2 days ago")
     updated-since: ${APP_TICKETS_UPDATED_SINCE:${app.tickets.hours} hours ago}
-    # Consulta TicketSQL según el rol de Keycloak (rol: consulta). Se define en rt.yml (ver rt.yml.example).
+    # Consulta TicketSQL según el rol de Keycloak (rol: consulta). Se define en application-security.yml (ver application-security.yml.example).
     # Con varios roles se unen con OR; sin ninguno, los agentes ven la consulta por defecto de arriba.
     # {usuario} y {email} se sustituyen por los del usuario autenticado: Owner = '{usuario}'.
     queries-by-role: {}

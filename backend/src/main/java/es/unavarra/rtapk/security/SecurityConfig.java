@@ -29,7 +29,10 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/config").permitAll()
                         .requestMatchers("/api/**").authenticated()
-                        .anyRequest().denyAll())
+                        .requestMatchers("/actuator/**").denyAll()
+                        // El resto es el frontend empaquetado (ficheros estáticos y rutas de Angular, ver
+                        // SpaWebConfig): público, el login lo hace Angular contra Keycloak
+                        .anyRequest().permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // API sin cookies (Bearer token), CSRF no aplica

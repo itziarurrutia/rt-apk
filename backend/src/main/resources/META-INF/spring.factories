@@ -1,0 +1,1 @@
+org.springframework.context.ApplicationListener=es.unavarra.rtapk.tls.TrustedCertificates

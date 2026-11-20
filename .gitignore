@@ -7,6 +7,8 @@ target/
 # Configuración local con datos reales
 *.env
 !*.env.example
+application-security.yml
+# nombre anterior
 rt.yml
 
 # Volcados de error de la JVM
