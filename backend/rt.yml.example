@@ -26,6 +26,10 @@ RT_PASSWORD: 'contraseña'
 #    queries-by-role:
 #      ptgas: "Queue = 'apoyo.admon' AND Created > '2 hours ago' AND Owner = '{usuario}' AND Status = '__Active__'"
 #      ingenieria: "Created > '2 hours ago' AND Status = '__Active__' AND Queue = 'apoyo.dpto' AND CF.{NDepartamento} = 'Ingenieria'"
+#    # Texto tras "Perfil <rol>" en la vista de tickets (por defecto "activos")
+#    descriptions-by-role:
+#      ptgas: "activos asignados a mí · creados en las últimas 2 horas"
+#      ingenieria: "activos de Ingeniería · creados en las últimas 2 horas"
 
 #RT_API_VERSION: rest1
 #RT_TIME_ZONE: Europe/Madrid

@@ -46,6 +46,7 @@ public class RecentTicketService {
     private final String queue;
     private final String updatedSince;
     private final Map<String, String> queriesByRole;
+    private final TicketQueriesProperties queries;
     private final Semaphore permits = new Semaphore(MAX_PARALLEL_TICKETS);
 
     @Autowired
@@ -57,6 +58,7 @@ public class RecentTicketService {
         this.queue = queue;
         this.updatedSince = updatedSince;
         this.queriesByRole = queries.queriesByRole();
+        this.queries = queries;
     }
 
     public RecentTicketService(RtGateway rt, String queue, String updatedSince) {
@@ -66,7 +68,10 @@ public class RecentTicketService {
     public TicketsRecientes recent(CurrentUser user) {
         List<String> profiles = profilesOf(user);
         if (!profiles.isEmpty()) {
-            return new TicketsRecientes(null, null, load(rt.findByQuery(profileQuery(user, profiles))), profiles);
+            Map<String, String> descriptions = profiles.stream()
+                    .collect(Collectors.toMap(p -> p, queries::descriptionOf, (a, b) -> a, java.util.LinkedHashMap::new));
+            return new TicketsRecientes(null, null, load(rt.findByQuery(profileQuery(user, profiles))), profiles,
+                    descriptions);
         }
         if (!user.agent()) {
             // La vista de cola lo ve todo, así que solo para agentes

@@ -48,6 +48,8 @@ app:
     # Con varios roles se unen con OR; sin ninguno, los agentes ven la consulta por defecto de arriba.
     # {usuario} y {email} se sustituyen por los del usuario autenticado: Owner = '{usuario}'.
     queries-by-role: {}
+    # Texto que ve el usuario tras "Perfil <rol>" en la vista de tickets (rol: texto). Por defecto "activos".
+    descriptions-by-role: {}
   security:
     # false = sin autenticación (solo para el modo demo)
     enabled: ${APP_SECURITY_ENABLED:true}

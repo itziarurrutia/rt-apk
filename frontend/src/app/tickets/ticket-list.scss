@@ -12,6 +12,11 @@
 .subtitle {
   margin: 0 0 16px;
   color: var(--mat-sys-on-surface-variant);
+
+  /* Un perfil por línea si el usuario tiene varios */
+  .profile {
+    display: block;
+  }
 }
 
 .list {

@@ -124,7 +124,8 @@ class RecentTicketServiceTest {
     private static final String INGENIERIA = "Created > '2 hours ago' AND Status = '__Active__' AND Queue = 'apoyo.dpto' AND CF.{NDepartamento} = 'Ingenieria'";
 
     private final RecentTicketService byRole = new RecentTicketService(rt, "apoyo.dpto", "5 hours ago",
-            new TicketQueriesProperties(Map.of("ptgas", PTGAS, "ingenieria", INGENIERIA)));
+            new TicketQueriesProperties(Map.of("ptgas", PTGAS, "ingenieria", INGENIERIA),
+                    Map.of("ptgas", "asignados a mí")));
 
     private static CurrentUser withRoles(boolean agent, String... roles) {
         return new CurrentUser("usuario", null, "Usuario", agent, Set.of(roles));
@@ -139,6 +140,7 @@ class RecentTicketServiceTest {
         TicketsRecientes result = byRole.recent(withRoles(false, "ptgas", "default-roles-rt-mobile"));
 
         assertThat(result.perfiles()).containsExactly("ptgas");
+        assertThat(result.descripciones()).containsExactly(Map.entry("ptgas", "asignados a mí"));
         assertThat(result.cola()).isNull();
         assertThat(result.tickets()).extracting(TicketReciente::id).containsExactly(7L);
         verify(rt, never()).findRecentActive(anyString(), anyString());
@@ -153,6 +155,9 @@ class RecentTicketServiceTest {
 
         // Roles sin distinguir mayúsculas y en orden alfabético
         assertThat(result.perfiles()).containsExactly("ingenieria", "ptgas");
+        // Sin texto configurado, "activos"
+        assertThat(result.descripciones()).containsExactly(
+                Map.entry("ingenieria", "activos"), Map.entry("ptgas", "asignados a mí"));
         assertThat(result.tickets()).isEmpty();
     }
 

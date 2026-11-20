@@ -4,7 +4,9 @@
     @if (data(); as d) {
       <p class="subtitle">
         @if (d.perfiles.length) {
-          Perfil <strong>{{ d.perfiles.join(', ') }}</strong> · activos
+          @for (perfil of d.perfiles; track perfil) {
+            <span class="profile">Perfil <strong>{{ perfil }}</strong> · {{ d.descripciones[perfil] ?? 'activos' }}</span>
+          }
         } @else {
           Cola <strong>{{ d.cola }}</strong> · activos · creados {{ since() }}
         }

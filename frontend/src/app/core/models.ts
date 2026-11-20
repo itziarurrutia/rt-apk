@@ -81,4 +81,6 @@ export interface TicketsRecientes {
   tickets: TicketReciente[];
   /** Roles de Keycloak cuya consulta se ha usado (vacío = consulta por defecto). */
   perfiles: string[];
+  /** Texto de cada perfil tras "Perfil <rol>" (configurable en el backend). */
+  descripciones: Record<string, string>;
 }
