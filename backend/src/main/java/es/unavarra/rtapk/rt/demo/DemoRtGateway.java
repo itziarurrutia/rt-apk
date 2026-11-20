@@ -9,6 +9,8 @@ import es.unavarra.rtapk.domain.TicketRef;
 import es.unavarra.rtapk.rt.RtGateway;
 import es.unavarra.rtapk.rt.RtProperties;
 import es.unavarra.rtapk.rt.rest1.Rest1TicketMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @ConditionalOnProperty(name = "rt.api-version", havingValue = "demo")
 public class DemoRtGateway implements RtGateway {
 
+    private static final Logger log = LoggerFactory.getLogger(DemoRtGateway.class);
     private static final Set<String> ACTIVE = Set.of("new", "open", "stalled");
 
     private final List<Ticket> tickets;
@@ -112,6 +115,12 @@ public class DemoRtGateway implements RtGateway {
         history.get(ticketId).add(new TicketHistoryEntry(transactionIds.incrementAndGet(), "Correspond",
                 "svc-rt-apk", OffsetDateTime.now(), "Correspondence added", text));
         addMessage(ticketId, text);
+    }
+
+    /** En demo los assets no son tickets: el comentario solo se deja en el log. */
+    @Override
+    public void addComment(long ticketId, String subject, String text) {
+        log.info("Demo: comentario en el ticket {}: {}", ticketId, subject);
     }
 
     /** Como hace RT con un correo: multipart/alternative con una parte text/plain y otra text/html. */

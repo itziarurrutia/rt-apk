@@ -36,4 +36,10 @@ public interface RtGateway {
 
     /** Añade una respuesta (correspondencia) visible para los solicitantes. */
     void addReply(long ticketId, String text);
+
+    /**
+     * Añade un comentario interno (Action: comment, no lo ven los solicitantes) con asunto y texto plano.
+     * Sirve también para los assets, que en RT son tickets.
+     */
+    void addComment(long ticketId, String subject, String text);
 }

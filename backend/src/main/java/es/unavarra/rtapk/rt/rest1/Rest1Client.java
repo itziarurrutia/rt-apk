@@ -38,7 +38,10 @@ public class Rest1Client {
                     + response.statusMessage());
         }
         if (!response.isOk()) {
-            throw new RtAccessException("RT respondió " + response.status() + " " + response.statusMessage());
+            // RT explica el motivo en las líneas "# ..." de la respuesta
+            String detail = String.join(" | ", response.allComments().toList());
+            throw new RtAccessException("RT respondió " + response.status() + " " + response.statusMessage()
+                    + (detail.isBlank() ? "" : ": " + RtCredentialsInterceptor.redact(detail)));
         }
         return response;
     }

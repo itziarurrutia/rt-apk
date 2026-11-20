@@ -115,6 +115,28 @@ public class Rest1RtGateway implements RtGateway {
         }
     }
 
+    @Override
+    public void addComment(long ticketId, String subject, String text) {
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("content", "id: " + ticketId + "\nAction: comment\nText: " + indentContinuation(text)
+                + "\nContent-Type: text/plain\nSubject: " + oneLine(subject));
+        // comment2: formulario propio de la UPNA (Forms/ticket/comment2 en RT), como comment pero que guarda
+        // el Subject en el comentario. Si RT no lo encuentra, usa Forms/ticket/default (edición del ticket)
+        // y cambiaría el asunto del asset: en ese caso responde "Unknown field" y aquí se lanza un error.
+        Rest1Response response = client.call(c -> c.post().uri("/ticket/{id}/comment2", ticketId)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(form));
+        failIfMissing(response, ticketId);
+        if (!response.hasCommentContaining("recorded") && !response.hasCommentContaining("added")) {
+            throw new RtAccessException("RT no confirmó el comentario: " + String.join(" | ", response.allComments().toList()));
+        }
+    }
+
+    /** El asunto es un campo de una sola línea. */
+    static String oneLine(String text) {
+        return text.replaceAll("[\\r\\n]+", " ").strip();
+    }
+
     /** En REST 1.0 las líneas de continuación de un valor multilínea van sangradas. */
     static String indentContinuation(String text) {
         return text.replace("\r\n", "\n").replace("\n", "\n ");

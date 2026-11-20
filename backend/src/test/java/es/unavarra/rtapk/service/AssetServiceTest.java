@@ -5,6 +5,7 @@ import es.unavarra.rtapk.domain.AssetMatch;
 import es.unavarra.rtapk.domain.AssetNotFoundException;
 import es.unavarra.rtapk.domain.InvalidSearchException;
 import es.unavarra.rtapk.domain.PassIz;
+import es.unavarra.rtapk.rt.RtGateway;
 import es.unavarra.rtapk.rt.demo.DemoAssetGateway;
 import es.unavarra.rtapk.security.CurrentUser;
 import org.springframework.security.access.AccessDeniedException;
@@ -17,11 +18,18 @@ import static es.unavarra.rtapk.domain.AssetSearchField.SERIE;
 import static es.unavarra.rtapk.domain.AssetSearchField.USUARIO_WINDOWS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /** Usa los datos demo como RT simulado. */
 class AssetServiceTest {
 
-    private final AssetService service = new AssetService(new DemoAssetGateway());
+    private final RtGateway tickets = mock(RtGateway.class);
+    private final AssetService service = new AssetService(new DemoAssetGateway(), tickets);
 
     @Test
     void numericTextMatchesInventoryAndSerial() {
@@ -67,6 +75,34 @@ class AssetServiceTest {
         assertThatThrownBy(() -> service.getPassIz(user, "78763")).isInstanceOf(AccessDeniedException.class);
         assertThatThrownBy(() -> service.getPassIz(agent, "1")).isInstanceOf(AssetNotFoundException.class);
         assertThatThrownBy(() -> service.getPassIz(agent, "../x")).isInstanceOf(InvalidSearchException.class);
+    }
+
+    @Test
+    void viewingPassIzIsCommentedOnTheAsset() {
+        CurrentUser agent = new CurrentUser("tecnico", "tecnico@example.org", "Técnico", true);
+        long assetId = service.getByInventario("78763").id();
+
+        service.getPassIz(agent, "78763");
+
+        verify(tickets).addComment(assetId, "El usuario tecnico ha visto fecha_p", "El usuario tecnico ha visto fecha_p");
+    }
+
+    @Test
+    void passIzIsNotReturnedIfTheCommentFails() {
+        CurrentUser agent = new CurrentUser("tecnico", "tecnico@example.org", "Técnico", true);
+        doThrow(new es.unavarra.rtapk.rt.RtAccessException("RT caído"))
+                .when(tickets).addComment(anyLong(), anyString(), anyString());
+
+        assertThatThrownBy(() -> service.getPassIz(agent, "78763"))
+                .isInstanceOf(es.unavarra.rtapk.rt.RtAccessException.class);
+    }
+
+    @Test
+    void nonAgentsLeaveNoComment() {
+        CurrentUser user = new CurrentUser("ana", "ana@example.org", "Ana", false);
+
+        assertThatThrownBy(() -> service.getPassIz(user, "78763")).isInstanceOf(AccessDeniedException.class);
+        verify(tickets, never()).addComment(anyLong(), anyString(), anyString());
     }
 
     @Test

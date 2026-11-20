@@ -56,4 +56,9 @@ public class Rest2RtGateway implements RtGateway {
     public void addReply(long ticketId, String text) {
         throw new UnsupportedOperationException(NOT_YET);
     }
+
+    @Override
+    public void addComment(long ticketId, String subject, String text) {
+        throw new UnsupportedOperationException(NOT_YET);
+    }
 }

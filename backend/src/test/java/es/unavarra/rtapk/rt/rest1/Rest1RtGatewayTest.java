@@ -116,6 +116,19 @@ class Rest1RtGatewayTest {
     }
 
     @Test
+    void sendsCommentLikeThePowerShellScript() {
+        server.expect(requestTo(RT + "/ticket/1546090/comment2?" + AUTH))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().formData(MultiValueMap.fromSingleValue(Map.of("content",
+                        "id: 1546090\nAction: comment\nText: El usuario ana.garcia ha visto fecha_p\nContent-Type: text/plain\n"
+                                + "Subject: El usuario ana.garcia ha visto fecha_p"))))
+                .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# Comments added\n", TEXT_UTF8));
+
+        gateway.addComment(1546090, "El usuario ana.garcia ha visto fecha_p", "El usuario ana.garcia ha visto fecha_p");
+        server.verify();
+    }
+
+    @Test
     void findsRecentActiveTicketsOfQueue() {
         server.expect(requestTo(RT + "/search/ticket?query="
                         + "%28Queue%20%3D%20%27apoyo.dpto%27%20AND%20Created%20%3E%20%275%20hours%20ago%27"

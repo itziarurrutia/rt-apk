@@ -8,6 +8,7 @@ import es.unavarra.rtapk.domain.AssetSearchField;
 import es.unavarra.rtapk.domain.InvalidSearchException;
 import es.unavarra.rtapk.domain.PassIz;
 import es.unavarra.rtapk.rt.AssetGateway;
+import es.unavarra.rtapk.rt.RtGateway;
 import es.unavarra.rtapk.security.CurrentUser;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -34,9 +35,11 @@ public class AssetService {
     private static final Pattern DIGITS = Pattern.compile("^\\d+$");
 
     private final AssetGateway rt;
+    private final RtGateway tickets;
 
-    public AssetService(AssetGateway rt) {
+    public AssetService(AssetGateway rt, RtGateway tickets) {
         this.rt = rt;
+        this.tickets = tickets;
     }
 
     public List<AssetMatch> search(String query) {
@@ -62,7 +65,11 @@ public class AssetService {
                 .orElseThrow(() -> new AssetNotFoundException(numeroInventario));
     }
 
-    /** Pass_iz y su fragmento (caracteres 10 a 18). Al ser una contraseña, solo para agentes. */
+    /**
+     * Pass_iz y su fragmento (caracteres 10 a 18). Al ser una contraseña, solo para agentes, y cada
+     * consulta queda registrada como comentario en el asset ("El usuario X ha visto fecha_p"). Si RT no
+     * registra el comentario, no se devuelve la contraseña.
+     */
     public PassIz getPassIz(CurrentUser user, String numeroInventario) {
         if (!user.agent()) {
             throw new AccessDeniedException("Solo los agentes pueden consultar Pass_iz");
@@ -72,6 +79,10 @@ public class AssetService {
         }
         AssetFechaP fechaP = rt.findFechaP(numeroInventario)
                 .orElseThrow(() -> new AssetNotFoundException(numeroInventario));
+        Asset asset = getByInventario(numeroInventario);
+        String message = "El usuario " + user.username() + " ha visto fecha_p";
+        // RT rechaza un comentario sin texto ("Empty comment with no attachments submitted")
+        tickets.addComment(asset.id(), message, message);
         return PassIz.of(fechaP.passIz());
     }
 
