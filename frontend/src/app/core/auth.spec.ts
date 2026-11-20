@@ -1,4 +1,4 @@
-import { splitIssuer } from './auth';
+import { splitIssuer, visibleRoles } from './auth';
 
 describe('splitIssuer', () => {
   it('separa la URL de Keycloak y el realm', () => {
@@ -17,5 +17,17 @@ describe('splitIssuer', () => {
 
   it('rechaza una URL sin realm', () => {
     expect(() => splitIssuer('https://kc.example.org')).toThrow();
+  });
+});
+
+describe('visibleRoles', () => {
+  it('quita los roles internos de Keycloak y ordena el resto', () => {
+    expect(
+      visibleRoles(['ptgas', 'offline_access', 'default-roles-rt-mobile', 'uma_authorization', 'ingenieria']),
+    ).toEqual(['ingenieria', 'ptgas']);
+  });
+
+  it('sin roles devuelve una lista vacía', () => {
+    expect(visibleRoles(undefined)).toEqual([]);
   });
 });

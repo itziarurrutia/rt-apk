@@ -74,8 +74,11 @@ export interface TicketReciente {
 }
 
 export interface TicketsRecientes {
-  cola: string;
-  /** Expresión de RT, p. ej. "5 hours ago". */
-  actualizadosDesde: string;
+  /** Cola de la consulta por defecto; null si se ha usado la consulta de un perfil. */
+  cola: string | null;
+  /** Expresión de RT de la consulta por defecto, p. ej. "5 hours ago"; null con perfil. */
+  actualizadosDesde: string | null;
   tickets: TicketReciente[];
+  /** Roles de Keycloak cuya consulta se ha usado (vacío = consulta por defecto). */
+  perfiles: string[];
 }

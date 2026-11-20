@@ -43,6 +43,11 @@ public final class TicketSqlBuilder {
     }
 
     static String quote(String value) {
-        return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'";
+        return "'" + escape(value) + "'";
+    }
+
+    /** Escapa un valor para ponerlo dentro de comillas simples de TicketSQL (barra invertida y comilla). */
+    public static String escape(String value) {
+        return value.replace("\\", "\\\\").replace("'", "\\'");
     }
 }

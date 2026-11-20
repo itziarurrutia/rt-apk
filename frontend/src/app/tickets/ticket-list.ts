@@ -31,7 +31,7 @@ export class TicketList {
   protected readonly error = signal<string | null>(null);
   protected readonly since = computed(() => {
     const d = this.data();
-    return d ? updatedSinceLabel(d.actualizadosDesde) : '';
+    return d?.actualizadosDesde ? updatedSinceLabel(d.actualizadosDesde) : '';
   });
   protected readonly statusLabel = statusLabel;
 

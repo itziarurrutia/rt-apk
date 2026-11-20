@@ -18,6 +18,15 @@ RT_PASSWORD: 'contraseña'
 #APP_TICKETS_HOURS: 5
 #APP_TICKETS_QUEUE: apoyo.dpto
 
+# Consulta de tickets según el rol de Keycloak del usuario (TicketSQL de RT). Con varios roles se
+# unen con OR. Quien no tenga ninguno de estos roles ve la consulta por defecto (si tiene rt-agent).
+# {usuario} y {email} se sustituyen por los del usuario que ha entrado en Keycloak (entre comillas).
+#app:
+#  tickets:
+#    queries-by-role:
+#      ptgas: "Queue = 'apoyo.admon' AND Created > '2 hours ago' AND Owner = '{usuario}' AND Status = '__Active__'"
+#      ingenieria: "Created > '2 hours ago' AND Status = '__Active__' AND Queue = 'apoyo.dpto' AND CF.{NDepartamento} = 'Ingenieria'"
+
 #RT_API_VERSION: rest1
 #RT_TIME_ZONE: Europe/Madrid
 

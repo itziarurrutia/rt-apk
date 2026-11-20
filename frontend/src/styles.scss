@@ -1,17 +1,47 @@
 @use '@angular/material' as mat;
 
+/*
+ * Identidad corporativa de la Universidad Pública de Navarra (UPNA), tomada de www.unavarra.es:
+ * rojo corporativo #DC2C2A, texto casi negro #131313, gris claro #F0F0F0 y tipografía Roboto.
+ */
+$upna-red: #dc2c2a;
+$upna-red-dark: #b3201f;
+$upna-text: #131313;
+$upna-grey: #f0f0f0;
+
 html {
   color-scheme: light;
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        primary: mat.$red-palette,
+        tertiary: mat.$orange-palette,
       ),
       typography: Roboto,
       density: 0,
     )
   );
+  // La paleta roja de Material no es exactamente la de la UPNA: se fijan los tonos corporativos
+  @include mat.theme-overrides(
+    (
+      primary: $upna-red,
+      on-primary: #ffffff,
+      primary-container: #fde4e3,
+      on-primary-container: #5c0b0a,
+      secondary-container: $upna-grey,
+      on-secondary-container: $upna-text,
+      on-surface: $upna-text,
+      background: #ffffff,
+      surface: #ffffff,
+      surface-container-lowest: #ffffff,
+      surface-container-low: #f8f8f8,
+      surface-container: $upna-grey,
+      surface-container-high: #e8e8e8,
+      surface-container-highest: #e0e0e0,
+    )
+  );
+  --upna-red: #{$upna-red};
+  --upna-red-dark: #{$upna-red-dark};
 }
 
 html,

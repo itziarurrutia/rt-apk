@@ -1,7 +1,7 @@
 <mat-toolbar class="top">
-  <a class="brand" routerLink="/">
-    <mat-icon>support_agent</mat-icon>
-    <span>RT</span>
+  <a class="brand" routerLink="/" aria-label="RT - Universidad Pública de Navarra">
+    <span class="brand-upna">upna</span>
+    <span class="brand-app">RT</span>
   </a>
   <nav class="top-nav">
     @for (item of nav; track item.path) {
@@ -11,12 +11,32 @@
     }
   </nav>
   @if (auth.enabled()) {
-    <div class="user">
-      <span class="user-name" [title]="auth.username() ?? ''">{{ auth.displayName() }}</span>
-      <button mat-icon-button type="button" (click)="auth.logout()" aria-label="Cerrar sesión" title="Cerrar sesión">
+    <button mat-button type="button" class="user" [matMenuTriggerFor]="userMenu" aria-label="Mi cuenta">
+      <mat-icon>account_circle</mat-icon>
+      <span class="user-name">{{ auth.displayName() }}</span>
+    </button>
+    <mat-menu #userMenu="matMenu" xPosition="before">
+      <div class="user-info" (click)="$event.stopPropagation()">
+        <div class="user-info-name">{{ auth.displayName() }}</div>
+        @if (auth.username(); as username) {
+          <div class="user-info-username">{{ username }}</div>
+        }
+        <div class="user-info-label">Roles</div>
+        @if (auth.roles().length) {
+          <div class="roles">
+            @for (role of auth.roles(); track role) {
+              <span class="role">{{ role }}</span>
+            }
+          </div>
+        } @else {
+          <div class="no-roles">Sin roles asignados</div>
+        }
+      </div>
+      <button mat-menu-item type="button" (click)="auth.logout()">
         <mat-icon>logout</mat-icon>
+        <span>Cerrar sesión</span>
       </button>
-    </div>
+    </mat-menu>
   }
 </mat-toolbar>
 

@@ -44,6 +44,10 @@ app:
     hours: ${APP_TICKETS_HOURS:5}
     # Expresión de fecha de RT; por defecto "<hours> hours ago". Se puede sustituir entera (p. ej. "2 days ago")
     updated-since: ${APP_TICKETS_UPDATED_SINCE:${app.tickets.hours} hours ago}
+    # Consulta TicketSQL según el rol de Keycloak (rol: consulta). Se define en rt.yml (ver rt.yml.example).
+    # Con varios roles se unen con OR; sin ninguno, los agentes ven la consulta por defecto de arriba.
+    # {usuario} y {email} se sustituyen por los del usuario autenticado: Owner = '{usuario}'.
+    queries-by-role: {}
   security:
     # false = sin autenticación (solo para el modo demo)
     enabled: ${APP_SECURITY_ENABLED:true}

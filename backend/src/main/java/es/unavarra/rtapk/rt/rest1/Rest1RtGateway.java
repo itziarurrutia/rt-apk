@@ -52,8 +52,7 @@ public class Rest1RtGateway implements RtGateway {
     }
 
     @Override
-    public List<TicketRef> findRecentActive(String queue, String updatedSince) {
-        String sql = TicketSqlBuilder.recentActive(queue, updatedSince);
+    public List<TicketRef> findByQuery(String sql) {
         Rest1Response response = client.call(c -> c.get().uri(b -> b.path("/search/ticket")
                 .queryParam("query", "{query}")
                 .build(sql)));

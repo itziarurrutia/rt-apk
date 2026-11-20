@@ -19,9 +19,11 @@ import java.util.List;
 public class TicketService {
 
     private final RtGateway rt;
+    private final RecentTicketService profiles;
 
-    public TicketService(RtGateway rt) {
+    public TicketService(RtGateway rt, RecentTicketService profiles) {
         this.rt = rt;
+        this.profiles = profiles;
     }
 
     public List<Ticket> search(CurrentUser user, TicketQuery query) {
@@ -35,7 +37,9 @@ public class TicketService {
 
     public Ticket get(CurrentUser user, long id) {
         Ticket ticket = rt.getTicket(id);
-        if (!user.agent() && !(user.hasEmail() && ticket.hasRequestor(user.email()))) {
+        boolean requestor = user.hasEmail() && ticket.hasRequestor(user.email());
+        // Sin rt-agent: solo sus tickets como solicitante o los que devuelve la consulta de su perfil
+        if (!user.agent() && !requestor && !profiles.profileIncludes(user, id)) {
             // 404 y no 403 para no revelar qué tickets existen
             throw new TicketNotFoundException(id);
         }

@@ -8,6 +8,7 @@ import es.unavarra.rtapk.rt.RtGateway;
 import es.unavarra.rtapk.security.CurrentUserResolver;
 import es.unavarra.rtapk.security.KeycloakJwtAuthenticationConverter;
 import es.unavarra.rtapk.security.SecurityConfig;
+import es.unavarra.rtapk.service.RecentTicketService;
 import es.unavarra.rtapk.service.TicketService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,10 @@ class TicketControllerTest {
 
     @MockitoBean
     private JwtDecoder jwtDecoder;
+
+    /** Sin perfil: profileIncludes devuelve false (valor por defecto del mock). */
+    @MockitoBean
+    private RecentTicketService recentTickets;
 
     private static RequestPostProcessor user(String email) {
         return jwt().jwt(j -> j.claim("preferred_username", "ana.garcia").claim("email", email).claim("name", "Ana García"));
@@ -109,6 +114,17 @@ class TicketControllerTest {
         mvc.perform(get("/api/tickets/7").with(user(ANA)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    void ticketsOfTheUsersProfileCanBeOpened() throws Exception {
+        when(rt.getTicket(7)).thenReturn(ticket(7, "otra@example.org"));
+        when(recentTickets.profileIncludes(org.mockito.ArgumentMatchers.any(), org.mockito.ArgumentMatchers.eq(7L)))
+                .thenReturn(true);
+
+        mvc.perform(get("/api/tickets/7").with(user(ANA)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(7));
     }
 
     @Test

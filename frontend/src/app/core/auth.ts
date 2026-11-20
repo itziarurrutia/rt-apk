@@ -10,6 +10,16 @@ export interface PublicConfig {
   clientId: string | null;
 }
 
+/** Roles que Keycloak añade a todos los usuarios y no aportan nada en la aplicación. */
+const INTERNAL_ROLES = new Set(['offline_access', 'uma_authorization']);
+
+/** Roles de realm del token, sin los internos de Keycloak, en orden alfabético. */
+export function visibleRoles(roles: readonly string[] | undefined): string[] {
+  return (roles ?? [])
+    .filter((role) => !INTERNAL_ROLES.has(role) && !role.startsWith('default-roles-'))
+    .sort((a, b) => a.localeCompare(b));
+}
+
 /** "https://kc.example.org/realms/rt-mobile" -> { url: "https://kc.example.org", realm: "rt-mobile" } */
 export function splitIssuer(issuer: string): { url: string; realm: string } {
   const match = /^(.*)\/realms\/([^/]+)\/?$/.exec(issuer.trim());
@@ -33,6 +43,7 @@ export class AuthService {
   readonly enabled = signal(false);
   readonly username = signal<string | null>(null);
   readonly displayName = signal<string | null>(null);
+  readonly roles = signal<string[]>([]);
 
   async init(): Promise<void> {
     let config: PublicConfig;
@@ -57,9 +68,12 @@ export class AuthService {
     // login-required: si no hay sesión, redirige a la página de login de Keycloak y vuelve aquí
     await this.keycloak.init({ onLoad: 'login-required', pkceMethod: 'S256', checkLoginIframe: false });
 
-    const claims = this.keycloak.tokenParsed as { preferred_username?: string; name?: string } | undefined;
+    const claims = this.keycloak.tokenParsed as
+      | { preferred_username?: string; name?: string; realm_access?: { roles?: string[] } }
+      | undefined;
     this.username.set(claims?.preferred_username ?? null);
     this.displayName.set(claims?.name ?? claims?.preferred_username ?? null);
+    this.roles.set(visibleRoles(claims?.realm_access?.roles));
     this.enabled.set(true);
   }
 

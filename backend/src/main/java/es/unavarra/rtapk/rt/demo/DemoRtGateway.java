@@ -74,6 +74,15 @@ public class DemoRtGateway implements RtGateway {
                 .toList();
     }
 
+    /** En demo no se interpreta TicketSQL: devuelve todos los tickets activos. */
+    @Override
+    public List<TicketRef> findByQuery(String ticketSql) {
+        return tickets.stream()
+                .filter(t -> ACTIVE.contains(t.status()))
+                .map(t -> new TicketRef(t.id(), t.subject()))
+                .toList();
+    }
+
     @Override
     public Ticket getTicket(long id) {
         return tickets.stream().filter(t -> t.id() == id).findFirst()

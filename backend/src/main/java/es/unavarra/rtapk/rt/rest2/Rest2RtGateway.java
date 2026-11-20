@@ -28,7 +28,7 @@ public class Rest2RtGateway implements RtGateway {
     }
 
     @Override
-    public List<TicketRef> findRecentActive(String queue, String updatedSince) {
+    public List<TicketRef> findByQuery(String ticketSql) {
         throw new UnsupportedOperationException(NOT_YET);
     }
 

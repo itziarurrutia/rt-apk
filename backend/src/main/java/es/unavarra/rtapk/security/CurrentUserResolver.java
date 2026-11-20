@@ -3,8 +3,12 @@ package es.unavarra.rtapk.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class CurrentUserResolver {
@@ -36,8 +40,13 @@ public class CurrentUserResolver {
         }
         boolean agent = authentication.getAuthorities().stream()
                 .anyMatch(a -> agentAuthority.equals(a.getAuthority()));
+        Set<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring("ROLE_".length()))
+                .collect(Collectors.toSet());
         String name = firstNonNull(blankToNull(jwt.getClaimAsString("name")), username);
-        return new CurrentUser(username, email, name, agent);
+        return new CurrentUser(username, email, name, agent, roles);
     }
 
     private static String blankToNull(String value) {
