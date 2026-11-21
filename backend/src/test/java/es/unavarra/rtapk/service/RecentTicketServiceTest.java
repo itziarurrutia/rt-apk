@@ -55,7 +55,7 @@ class RecentTicketServiceTest {
 
         assertThat(result.cola()).isEqualTo("apoyo.dpto");
         assertThat(result.tickets()).containsExactly(new TicketReciente(1, "Asunto 1", "new", "david.blasco",
-                "a@example.org, b@example.org", "apoyo.dpto", "Economia", UPDATED, "Hola,\nno imprime & no escanea.\nGracias"));
+                "a@example.org, b@example.org", "apoyo.dpto", "Economia", null, UPDATED, "Hola,\nno imprime & no escanea.\nGracias"));
         verify(rt, never()).getAttachmentContent(10);
         verify(rt, never()).getAttachmentContent(20);
     }
@@ -109,7 +109,7 @@ class RecentTicketServiceTest {
 
         // Se mantiene el orden de la búsqueda; el que falla conserva al menos id y asunto
         assertThat(tickets).extracting(TicketReciente::id).containsExactly(1L, 2L);
-        assertThat(tickets.getFirst()).isEqualTo(new TicketReciente(1, "Asunto 1", null, null, null, null, null, null, null));
+        assertThat(tickets.getFirst()).isEqualTo(new TicketReciente(1, "Asunto 1", null, null, null, null, null, null, null, null));
         assertThat(tickets.get(1).departamento()).isEqualTo("Economia");
     }
 

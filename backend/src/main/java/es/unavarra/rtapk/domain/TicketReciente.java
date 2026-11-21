@@ -8,6 +8,7 @@ import java.time.OffsetDateTime;
  * @param solicitante  Requestors del ticket
  * @param cola         cola de RT (Queue)
  * @param departamento campo personalizado NDepartamento
+ * @param inventario   campo personalizado Inventario (nº de inventario del equipo)
  * @param contenido    texto del adjunto text/plain más reciente (el último mensaje); null si no hay
  */
 public record TicketReciente(
@@ -18,6 +19,7 @@ public record TicketReciente(
         String solicitante,
         String cola,
         String departamento,
+        String inventario,
         OffsetDateTime ultimaActualizacion,
         String contenido) {
 }

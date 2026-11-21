@@ -137,6 +137,105 @@ class TicketControllerTest {
                 .andExpect(jsonPath("$.id").value(8));
     }
 
+    private static Ticket ownedBy(long id, String owner) {
+        return new Ticket(id, "Asunto " + id, "Soporte", "open", owner, List.of("otra@example.org"), 0,
+                OffsetDateTime.parse("2024-03-04T10:22:11+01:00"), null, Map.of());
+    }
+
+    @Test
+    void ownerCommentsAndResolves() throws Exception {
+        when(rt.getTicket(9)).thenReturn(ownedBy(9, "ana.garcia"));
+
+        mvc.perform(post("/api/tickets/9/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"Cambiado el tóner\",\"resolver\":true}"))
+                .andExpect(status().isNoContent());
+
+        verify(rt).addComment(eq(9L), eq("Comentario de ana.garcia desde rt-apk"),
+                argThat(t -> t.startsWith("Cambiado el tóner\n\n-- \nEnviado por Ana García (ana.garcia)")));
+        verify(rt).updateTicket(9, "resolved", Map.of());
+    }
+
+    @Test
+    void commentWithoutResolvingKeepsStatus() throws Exception {
+        when(rt.getTicket(9)).thenReturn(ownedBy(9, "ana.garcia"));
+
+        mvc.perform(post("/api/tickets/9/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"Pendiente de pieza\",\"resolver\":false}"))
+                .andExpect(status().isNoContent());
+
+        verify(rt).addComment(eq(9L), anyString(), anyString());
+        verify(rt, never()).updateTicket(anyLong(), any(), any());
+    }
+
+    private static Ticket departmentTicket(long id, String inventario) {
+        return new Ticket(id, "Asunto " + id, "apoyo.dpto", "open", "ana.garcia", List.of("otra@example.org"), 0,
+                OffsetDateTime.parse("2024-03-04T10:22:11+01:00"), null, Map.of("Inventario", inventario));
+    }
+
+    @Test
+    void resolvingADepartmentTicketUpdatesItsInventory() throws Exception {
+        when(rt.getTicket(11)).thenReturn(departmentTicket(11, "78763"));
+
+        mvc.perform(post("/api/tickets/11/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"Equipo sustituido\",\"resolver\":true,\"inventario\":\" 80001 \"}"))
+                .andExpect(status().isNoContent());
+
+        verify(rt).updateTicket(11, "resolved", Map.of("Inventario", "80001"));
+    }
+
+    @Test
+    void unchangedInventoryIsNotSent() throws Exception {
+        when(rt.getTicket(11)).thenReturn(departmentTicket(11, "78763"));
+
+        mvc.perform(post("/api/tickets/11/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"hecho\",\"resolver\":true,\"inventario\":\"78763\"}"))
+                .andExpect(status().isNoContent());
+
+        verify(rt).updateTicket(11, "resolved", Map.of());
+    }
+
+    @Test
+    void inventoryIsIgnoredOutsideTheDepartmentQueue() throws Exception {
+        when(rt.getTicket(9)).thenReturn(ownedBy(9, "ana.garcia"));
+
+        mvc.perform(post("/api/tickets/9/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"hecho\",\"resolver\":true,\"inventario\":\"80001\"}"))
+                .andExpect(status().isNoContent());
+
+        verify(rt).updateTicket(9, "resolved", Map.of());
+    }
+
+    @Test
+    void onlyTheOwnerCanComment() throws Exception {
+        // Ana es solicitante pero no propietaria: puede ver el ticket, no comentarlo
+        when(rt.getTicket(10)).thenReturn(ticket(10, ANA));
+
+        mvc.perform(post("/api/tickets/10/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"hola\",\"resolver\":true}"))
+                .andExpect(status().isForbidden());
+
+        verify(rt, never()).addComment(anyLong(), anyString(), anyString());
+    }
+
+    @Test
+    void commentSavedButNotResolvedIsReported() throws Exception {
+        when(rt.getTicket(9)).thenReturn(ownedBy(9, "ana.garcia"));
+        org.mockito.Mockito.doThrow(new RtAccessException("RT no cambió el estado"))
+                .when(rt).updateTicket(9, "resolved", Map.of());
+
+        mvc.perform(post("/api/tickets/9/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"hecho\",\"resolver\":true}"))
+                .andExpect(status().isBadGateway())
+                .andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("El comentario se ha guardado")));
+    }
+
+    @Test
+    void emptyCommentIsRejected() throws Exception {
+        mvc.perform(post("/api/tickets/9/comentarios").with(user(ANA)).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"texto\":\"  \",\"resolver\":false}"))
+                .andExpect(status().isBadRequest());
+    }
+
     @Test
     void userHistoryHidesInternalComments() throws Exception {
         when(rt.getTicket(1)).thenReturn(ticket(1, ANA));

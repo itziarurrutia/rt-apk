@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,6 +141,28 @@ public class Rest1RtGateway implements RtGateway {
         failIfMissing(response, ticketId);
         if (!response.hasCommentContaining("recorded") && !response.hasCommentContaining("added")) {
             throw new RtAccessException("RT no confirmó el comentario: " + String.join(" | ", response.allComments().toList()));
+        }
+    }
+
+    @Override
+    public void updateTicket(long ticketId, String status, Map<String, String> customFields) {
+        // Mismo formato que devuelve /show: "Status: resolved" y "CF.{Inventario}: 78763"
+        List<String> lines = new java.util.ArrayList<>();
+        if (status != null) {
+            lines.add("Status: " + oneLine(status));
+        }
+        customFields.forEach((name, value) -> lines.add("CF.{" + oneLine(name) + "}: " + oneLine(value)));
+        if (lines.isEmpty()) {
+            return;
+        }
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("content", String.join("\n", lines));
+        Rest1Response response = client.call(c -> c.post().uri("/ticket/{id}/edit", ticketId)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(form));
+        failIfMissing(response, ticketId);
+        if (!response.hasCommentContaining("updated")) {
+            throw new RtAccessException("RT no actualizó el ticket: " + String.join(" | ", response.allComments().toList()));
         }
     }
 

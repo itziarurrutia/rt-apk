@@ -15,20 +15,71 @@
   </mat-expansion-panel-header>
 
   <ng-template matExpansionPanelContent>
-    @if (t.estado) {
+    @if (t.estado || canComment() || showDepartment()) {
       <div class="details">
-        <span class="status" [attr.data-status]="t.estado">{{ statusLabel(t.estado) }}</span>
+        @if (canComment() && !commenting()) {
+          <button mat-stroked-button type="button" (click)="startComment()">
+            <mat-icon>add_comment</mat-icon> Comentar
+          </button>
+        }
+        @if (t.estado) {
+          <span class="status" [attr.data-status]="t.estado">{{ statusLabel(t.estado) }}</span>
+        }
+        @if (showDepartment() && t.departamento) {
+          <span class="department" [attr.aria-label]="'Departamento: ' + t.departamento">{{ t.departamento }}</span>
+        }
       </div>
     }
 
-    @if (showDepartment()) {
-      <dl>
-        <div>
-          <dt>Departamento</dt>
-          <dd>{{ t.departamento ?? '—' }}</dd>
+    @if (commenting()) {
+      <form class="comment" [formGroup]="form" (ngSubmit)="send()">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Comentario interno</mat-label>
+          <textarea
+            matInput
+            formControlName="text"
+            rows="4"
+            [attr.aria-label]="'Comentario para el ticket ' + t.id"
+          ></textarea>
+          <mat-hint>No lo ven los solicitantes. Se firma con tu nombre.</mat-hint>
+          @if (text.hasError('required') && text.touched) {
+            <mat-error>Escribe el comentario</mat-error>
+          } @else if (text.hasError('maxlength')) {
+            <mat-error>Como mucho 10.000 caracteres</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="resolve-row">
+          <mat-slide-toggle formControlName="resolve">Resolver</mat-slide-toggle>
+
+          @if (showInventory()) {
+            <!-- Al resolver se guarda en el ticket si cambia -->
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="inventory">
+              <mat-label>Inventario</mat-label>
+              <input matInput formControlName="inventory" autocomplete="off" inputmode="numeric" />
+              @if (inventory.hasError('maxlength')) {
+                <mat-error>Como mucho 100 caracteres</mat-error>
+              }
+            </mat-form-field>
+          }
         </div>
-      </dl>
+
+        @if (sending()) {
+          <mat-progress-bar mode="indeterminate" />
+        }
+        @if (error(); as message) {
+          <p class="error" role="alert">{{ message }}</p>
+        }
+
+        <div class="actions">
+          <button mat-button type="button" (click)="cancel()" [disabled]="sending()">Cancelar</button>
+          <button mat-flat-button type="submit" [disabled]="sending()">
+            {{ resolve.value ? 'Comentar y resolver' : 'Comentar' }}
+          </button>
+        </div>
+      </form>
     }
+
 
     <h3>Último mensaje</h3>
     @if (t.contenido) {

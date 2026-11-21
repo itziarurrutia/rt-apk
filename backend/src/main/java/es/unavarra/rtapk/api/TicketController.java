@@ -37,6 +37,14 @@ public class TicketController {
     public record ReplyRequest(@NotBlank @Size(max = 10_000) String text) {
     }
 
+    /**
+     * Comentario interno; con {@code resolver}, además se resuelve el ticket y, si es de apoyo.dpto y se envía
+     * {@code inventario} con otro valor, se cambia su campo Inventario.
+     */
+    public record CommentRequest(@NotBlank @Size(max = 10_000) String texto, boolean resolver,
+                                 @Size(max = 100) String inventario) {
+    }
+
     @GetMapping("/me")
     public CurrentUser me(Authentication auth) {
         return users.resolve(auth);
@@ -58,6 +66,12 @@ public class TicketController {
     @GetMapping("/tickets/{id}/history")
     public List<TicketHistoryEntry> history(Authentication auth, @PathVariable long id) {
         return tickets.history(users.resolve(auth), id);
+    }
+
+    @PostMapping("/tickets/{id}/comentarios")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void comment(Authentication auth, @PathVariable long id, @Valid @RequestBody CommentRequest request) {
+        tickets.comment(users.resolve(auth), id, request.texto(), request.resolver(), request.inventario());
     }
 
     @PostMapping("/tickets/{id}/replies")

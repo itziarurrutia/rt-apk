@@ -36,6 +36,17 @@ mat-expansion-panel-header {
   gap: 8px 12px;
 }
 
+/* Departamento: etiqueta como la del estado, en otro tono de rojo (rojo oscuro UPNA, con borde) */
+.department {
+  padding: 0 8px;
+  border: 1px solid var(--upna-red-dark);
+  border-radius: 10px;
+  font: var(--mat-sys-label-small);
+  color: var(--upna-red-dark);
+  background: color-mix(in srgb, var(--upna-red-dark) 8%, transparent);
+  overflow-wrap: anywhere;
+}
+
 .status {
   padding: 1px 8px;
   border-radius: 10px;
@@ -49,22 +60,6 @@ mat-expansion-panel-header {
   }
 }
 
-dl {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 8px 24px;
-  margin: 12px 0 0;
-
-  dt {
-    font: var(--mat-sys-label-medium);
-    color: var(--mat-sys-on-surface-variant);
-  }
-
-  dd {
-    margin: 2px 0 0;
-    overflow-wrap: anywhere;
-  }
-}
 
 h3 {
   margin: 16px 0 6px;
@@ -92,4 +87,39 @@ h3 {
 
 .empty {
   color: var(--mat-sys-on-surface-variant);
+}
+
+/* Formulario de comentario */
+.comment {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 4px;
+  padding: 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  background: var(--mat-sys-surface-container-low);
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .error {
+    margin: 0;
+    color: var(--mat-sys-error);
+  }
+}
+
+/* Switch Resolver y, al lado, el Inventario (debajo si no cabe) */
+.comment .resolve-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  min-height: 56px;
+
+  .inventory {
+    flex: 0 1 220px;
+  }
 }

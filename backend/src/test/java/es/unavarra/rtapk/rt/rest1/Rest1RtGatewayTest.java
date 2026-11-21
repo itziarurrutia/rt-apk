@@ -129,6 +129,37 @@ class Rest1RtGatewayTest {
     }
 
     @Test
+    void resolvesTicket() {
+        server.expect(requestTo(RT + "/ticket/1546090/edit?" + AUTH))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().formData(MultiValueMap.fromSingleValue(Map.of("content", "Status: resolved"))))
+                .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# Ticket 1546090 updated.\n", TEXT_UTF8));
+
+        gateway.setStatus(1546090, "resolved");
+        server.verify();
+    }
+
+    @Test
+    void resolvesAndChangesCustomFieldInOneEdit() {
+        server.expect(requestTo(RT + "/ticket/1546090/edit?" + AUTH))
+                .andExpect(content().formData(MultiValueMap.fromSingleValue(Map.of("content",
+                        "Status: resolved\nCF.{Inventario}: 80001"))))
+                .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# Ticket 1546090 updated.\n", TEXT_UTF8));
+
+        gateway.updateTicket(1546090, "resolved", Map.of("Inventario", "80001"));
+        server.verify();
+    }
+
+    @Test
+    void statusChangeRejectedByRtIsReported() {
+        server.expect(requestTo(RT + "/ticket/1546090/edit?" + AUTH))
+                .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# You are not allowed to modify ticket 1546090.\n", TEXT_UTF8));
+
+        assertThatThrownBy(() -> gateway.setStatus(1546090, "resolved")).isInstanceOf(RtAccessException.class)
+                .hasMessageContaining("not allowed");
+    }
+
+    @Test
     void findsRecentActiveTicketsOfQueue() {
         server.expect(requestTo(RT + "/search/ticket?query="
                         + "%28Queue%20%3D%20%27apoyo.dpto%27%20AND%20Created%20%3E%20%275%20hours%20ago%27"

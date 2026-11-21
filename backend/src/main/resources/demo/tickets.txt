@@ -10,6 +10,7 @@ Priority: 10
 Created: 2026-11-05 09:14:26
 LastUpdated: 2026-11-09 09:07:50
 CF.{NDepartamento}: Economia
+CF.{Inventario}: 78763
 
 --
 
@@ -23,6 +24,7 @@ Priority: 5
 Created: 2026-11-16 10:22:11
 LastUpdated: 2026-11-17 08:01:59
 CF.{NDepartamento}: Estadistica, matematicas e informatica
+CF.{Inventario}: 65012
 
 --
 

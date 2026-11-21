@@ -19,6 +19,21 @@ public record Ticket(
         OffsetDateTime lastUpdated,
         Map<String, String> customFields) {
 
+    /** Campo personalizado de RT con el nº de inventario del equipo (tickets de apoyo.dpto). */
+    public static final String INVENTORY_FIELD = "Inventario";
+    /** Cola de apoyo a departamentos: sus tickets llevan NDepartamento e Inventario. */
+    public static final String DEPARTMENT_QUEUE = "apoyo.dpto";
+
+    public boolean inDepartmentQueue() {
+        return DEPARTMENT_QUEUE.equalsIgnoreCase(queue);
+    }
+
+    /** Nº de inventario (campo personalizado Inventario); null si no tiene. */
+    public String inventory() {
+        String value = customFields.get(INVENTORY_FIELD);
+        return value == null || value.isBlank() ? null : value.strip();
+    }
+
     public boolean hasRequestor(String email) {
         return email != null && requestors.stream().anyMatch(email::equalsIgnoreCase);
     }

@@ -7,6 +7,7 @@ import es.unavarra.rtapk.domain.TicketQuery;
 import es.unavarra.rtapk.domain.TicketRef;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Puerto de acceso a Request Tracker. Hay una implementación por versión de la API de RT
@@ -50,4 +51,15 @@ public interface RtGateway {
      * Sirve también para los assets, que en RT son tickets.
      */
     void addComment(long ticketId, String subject, String text);
+
+    /** Cambia el estado del ticket (p. ej. "resolved"). */
+    default void setStatus(long ticketId, String status) {
+        updateTicket(ticketId, status, Map.of());
+    }
+
+    /**
+     * Cambia en una sola operación el estado (si no es null) y los campos personalizados indicados
+     * (nombre del campo: valor; un valor vacío lo borra).
+     */
+    void updateTicket(long ticketId, String status, Map<String, String> customFields);
 }

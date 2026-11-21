@@ -42,7 +42,7 @@ public class DemoRtGateway implements RtGateway {
 
     public DemoRtGateway(RtProperties properties) {
         Rest1TicketMapper mapper = new Rest1TicketMapper(properties.timeZone());
-        this.tickets = DemoData.load("tickets.txt").stream().map(mapper::toTicket).toList();
+        this.tickets = new CopyOnWriteArrayList<>(DemoData.load("tickets.txt").stream().map(mapper::toTicket).toList());
         for (Ticket t : tickets) {
             String requestor = t.requestors().getFirst();
             String message = "Hola,\n\n" + t.subject() + ".\nLo he probado esta mañana y sigue igual.\n\n-- \n"
@@ -117,10 +117,25 @@ public class DemoRtGateway implements RtGateway {
         addMessage(ticketId, text);
     }
 
-    /** En demo los assets no son tickets: el comentario solo se deja en el log. */
+    /** Comentario interno en el historial; en demo los assets no son tickets, así que en ellos solo va al log. */
     @Override
     public void addComment(long ticketId, String subject, String text) {
         log.info("Demo: comentario en el ticket {}: {}", ticketId, subject);
+        List<TicketHistoryEntry> entries = history.get(ticketId);
+        if (entries != null) {
+            entries.add(new TicketHistoryEntry(transactionIds.incrementAndGet(), "Comment", "svc-rt-apk",
+                    OffsetDateTime.now(), "Comments added", text));
+        }
+    }
+
+    @Override
+    public void updateTicket(long ticketId, String status, Map<String, String> customFields) {
+        Ticket t = getTicket(ticketId);
+        Map<String, String> fields = new java.util.LinkedHashMap<>(t.customFields());
+        fields.putAll(customFields);
+        tickets.set(tickets.indexOf(t), new Ticket(t.id(), t.subject(), t.queue(), status != null ? status : t.status(),
+                t.owner(), t.requestors(), t.priority(), t.created(), OffsetDateTime.now(), Map.copyOf(fields)));
+        log.info("Demo: ticket {} actualizado: estado {}, campos {}", ticketId, status, customFields);
     }
 
     /** Como hace RT con un correo: multipart/alternative con una parte text/plain y otra text/html. */

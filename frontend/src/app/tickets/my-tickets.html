@@ -65,7 +65,7 @@
 
   <div class="list">
     @for (t of list; track t.id) {
-      <app-ticket-card [ticket]="t" />
+      <app-ticket-card [ticket]="t" [canComment]="true" (commented)="reload()" />
     }
   </div>
 }

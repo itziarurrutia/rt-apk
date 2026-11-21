@@ -3,6 +3,7 @@ package es.unavarra.rtapk.api;
 import es.unavarra.rtapk.domain.AssetNotFoundException;
 import es.unavarra.rtapk.domain.InvalidSearchException;
 import es.unavarra.rtapk.domain.TicketNotFoundException;
+import es.unavarra.rtapk.domain.TicketPartiallyUpdatedException;
 import es.unavarra.rtapk.rt.RtAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("Error accediendo a RT", e);
         // No se devuelve el detalle interno de RT al cliente
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, "Request Tracker no está disponible");
+    }
+
+    @ExceptionHandler(TicketPartiallyUpdatedException.class)
+    ProblemDetail partiallyUpdated(TicketPartiallyUpdatedException e) {
+        log.warn(e.getMessage(), e.getCause());
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, e.getMessage());
     }
 
     @ExceptionHandler(UnsupportedOperationException.class)

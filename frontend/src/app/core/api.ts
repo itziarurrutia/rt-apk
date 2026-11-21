@@ -55,6 +55,14 @@ export class TicketApi {
     return this.http.get<TicketHistoryEntry[]>(`/api/tickets/${id}/history`);
   }
 
+  /**
+   * Comentario interno; con resolver, además se resuelve el ticket y, si es de apoyo.dpto y se envía otro
+   * inventario, se cambia su campo Inventario.
+   */
+  comment(id: number, texto: string, resolver: boolean, inventario?: string) {
+    return this.http.post<void>(`/api/tickets/${id}/comentarios`, { texto, resolver, inventario });
+  }
+
   reply(id: number, text: string) {
     return this.http.post<void>(`/api/tickets/${id}/replies`, { text });
   }

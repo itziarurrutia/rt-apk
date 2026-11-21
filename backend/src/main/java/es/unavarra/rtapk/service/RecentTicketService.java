@@ -190,6 +190,7 @@ public class RecentTicketService {
                     String.join(", ", ticket.requestors()),
                     blankToNull(ticket.queue()),
                     blankToNull(ticket.customFields().get("NDepartamento")),
+                    ticket.inventory(),
                     ticket.lastUpdated(),
                     lastPlainTextMessage(ref.id()));
         } catch (RuntimeException e) {
@@ -240,7 +241,7 @@ public class RecentTicketService {
     }
 
     private static TicketReciente partial(TicketRef ref) {
-        return new TicketReciente(ref.id(), ref.subject(), null, null, null, null, null, null, null);
+        return new TicketReciente(ref.id(), ref.subject(), null, null, null, null, null, null, null, null);
     }
 
     private static String blankToNull(String value) {

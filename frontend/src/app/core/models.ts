@@ -70,6 +70,8 @@ export interface TicketReciente {
   /** Cola de RT (Queue). */
   cola: string | null;
   departamento: string | null;
+  /** Nº de inventario del equipo (campo Inventario de los tickets de apoyo.dpto). */
+  inventario: string | null;
   ultimaActualizacion: string | null;
   /** Último mensaje (adjunto text/plain más reciente). */
   contenido: string | null;
