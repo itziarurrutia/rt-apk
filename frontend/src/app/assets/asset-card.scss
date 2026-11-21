@@ -164,6 +164,8 @@ dd {
 .requests {
   display: flex;
   flex-wrap: wrap;
+  /* Reportar avería a la izquierda y Solicitar formateo a la derecha */
+  justify-content: space-between;
   gap: 8px;
   padding: 16px;
 }

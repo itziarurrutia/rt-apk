@@ -52,7 +52,7 @@ public class AssetRequestService {
         if (WINDOWS_11.equals(os) && !canRunWindows11(asset)) {
             throw new InvalidRequestException("El equipo " + asset.numeroInventario() + " no admite Windows 11");
         }
-        return rt.createTicket(queue, type.subject(asset.numeroInventario()), user.email(),
+        return rt.createTicket(queue, type.subject(asset.numeroInventario(), os), user.email(),
                 body(user, asset, text, dataSaved, os));
     }
 

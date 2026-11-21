@@ -45,7 +45,7 @@ class AssetRequestServiceTest {
 
         service.create(ana, "78763", AssetRequestType.FORMATEO, "Reinstalar", false, "Windows 10");
 
-        verify(rt).createTicket(eq("averias"), eq("Solicitud de formateo del equipo 78763"),
+        verify(rt).createTicket(eq("averias"), eq("Formatear y poner imagen de Windows 10 en equipo: 78763"),
                 eq("ana.garcia@example.org"),
                 org.mockito.ArgumentMatchers.endsWith("\nSistema operativo: Windows 10\nDatos salvados: No"
                         + "\n\n-- \nSolicitado por Ana García (ana.garcia) desde rt-apk"));
