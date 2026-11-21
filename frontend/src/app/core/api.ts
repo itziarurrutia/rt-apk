@@ -39,9 +39,12 @@ export class TicketApi {
     return this.http.get<TicketsRecientes>('/api/tickets/recientes');
   }
 
-  /** Los 5 tickets activos más recientes de los que el usuario es propietario. */
-  mine() {
-    return this.http.get<TicketReciente[]>('/api/tickets/mios');
+  /**
+   * Tickets activos de los que el usuario es propietario: sin texto, los 5 más recientes; con texto, los que
+   * lo contienen en el asunto (o también en el solicitante si lleva "@").
+   */
+  mine(q?: string) {
+    return this.http.get<TicketReciente[]>('/api/tickets/mios', { params: q ? { q } : {} });
   }
 
   get(id: number) {

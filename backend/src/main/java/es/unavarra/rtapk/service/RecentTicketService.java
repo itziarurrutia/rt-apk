@@ -40,6 +40,8 @@ public class RecentTicketService {
     private static final int MAX_PARALLEL_TICKETS = 6;
     /** Tickets de la vista "Tickets" (los del usuario como propietario). */
     static final int MINE_LIMIT = 5;
+    /** Resultados de la búsqueda en "Tickets" (cada ticket son tres consultas a RT). */
+    public static final int SEARCH_LIMIT = 30;
     /** Marcadores de las consultas por rol. */
     static final String USERNAME = "{usuario}";
     static final String EMAIL = "{email}";
@@ -89,6 +91,15 @@ public class RecentTicketService {
     public List<TicketReciente> mine(CurrentUser user) {
         List<TicketRef> refs = rt.findByQuery(TicketSqlBuilder.activeOwnedBy(user.username()), "-Created");
         return load(refs.stream().limit(MINE_LIMIT).toList());
+    }
+
+    /**
+     * Búsqueda entre todos los tickets activos del usuario como propietario: por asunto o, si el texto lleva
+     * "@", también por solicitante. Los más recientes primero, como mucho {@value #SEARCH_LIMIT}.
+     */
+    public List<TicketReciente> searchMine(CurrentUser user, String text) {
+        String sql = TicketSqlBuilder.activeOwnedByMatching(user.username(), text.strip());
+        return load(rt.findByQuery(sql, "-Created").stream().limit(SEARCH_LIMIT).toList());
     }
 
     /**

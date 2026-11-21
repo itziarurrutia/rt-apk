@@ -1,9 +1,39 @@
 :host {
   display: block;
+  /* Cabecera de dos líneas (asunto y solicitante · fecha): altura según el contenido */
+  --mat-expansion-header-collapsed-state-height: auto;
+  --mat-expansion-header-expanded-state-height: auto;
 }
 
-mat-card-subtitle a {
-  color: inherit;
+mat-expansion-panel-header {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.subject {
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-on-surface);
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+  overflow-wrap: anywhere;
+}
+
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
 }
 
 .status {

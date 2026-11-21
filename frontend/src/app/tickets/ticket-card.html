@@ -1,25 +1,30 @@
 @let t = ticket();
-<mat-card appearance="outlined">
-  <mat-card-header>
-    <mat-card-title>{{ t.asunto }}</mat-card-title>
-    <mat-card-subtitle>
-      <a [routerLink]="['/tickets', t.id]" [state]="{ back: back() }">#{{ t.id }}</a>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <div class="summary">
+        <span class="subject">{{ t.asunto }}</span>
+        <span class="meta">
+          {{ t.solicitante ?? 'Sin solicitante' }}
+          @if (t.ultimaActualizacion) {
+            · {{ t.ultimaActualizacion | date: 'dd/MM/yyyy HH:mm' }}
+          }
+        </span>
+      </div>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <ng-template matExpansionPanelContent>
+    <div class="details">
+      <a mat-stroked-button [routerLink]="['/tickets', t.id]" [state]="{ back: back() }">
+        <mat-icon>open_in_new</mat-icon> Abrir #{{ t.id }}
+      </a>
       @if (t.estado) {
-        ·
         <span class="status" [attr.data-status]="t.estado">{{ statusLabel(t.estado) }}</span>
       }
-      @if (t.ultimaActualizacion) {
-        · {{ t.ultimaActualizacion | date: 'dd/MM/yyyy HH:mm' }}
-      }
-    </mat-card-subtitle>
-  </mat-card-header>
+    </div>
 
-  <mat-card-content>
     <dl>
-      <div>
-        <dt>Solicitante</dt>
-        <dd>{{ t.solicitante ?? '—' }}</dd>
-      </div>
       <div>
         <dt>Departamento</dt>
         <dd>{{ t.departamento ?? '—' }}</dd>
@@ -36,5 +41,5 @@
     } @else {
       <p class="empty">Sin mensaje de texto.</p>
     }
-  </mat-card-content>
-</mat-card>
+  </ng-template>
+</mat-expansion-panel>

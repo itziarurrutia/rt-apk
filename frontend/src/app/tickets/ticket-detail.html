@@ -1,4 +1,4 @@
-<a mat-button [routerLink]="back.path"><mat-icon>arrow_back</mat-icon> {{ back.label }}</a>
+<a mat-button [routerLink]="back.path" [queryParams]="back.queryParams"><mat-icon>arrow_back</mat-icon> {{ back.label }}</a>
 
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" />

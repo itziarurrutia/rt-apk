@@ -47,6 +47,18 @@ public final class TicketSqlBuilder {
         return "Status = '__Active__' AND Owner = " + quote(owner);
     }
 
+    /**
+     * Tickets activos del propietario que contienen {@code text} en el asunto; si el texto lleva "@", también
+     * en el solicitante: "Status = '__Active__' AND Owner = 'u' AND (Subject LIKE 'x' OR Requestor LIKE 'x')".
+     */
+    public static String activeOwnedByMatching(String owner, String text) {
+        String like = quote(text);
+        String match = text.contains("@")
+                ? "(Subject LIKE " + like + " OR Requestor LIKE " + like + ")"
+                : "Subject LIKE " + like;
+        return activeOwnedBy(owner) + " AND " + match;
+    }
+
     static String quote(String value) {
         return "'" + escape(value) + "'";
     }

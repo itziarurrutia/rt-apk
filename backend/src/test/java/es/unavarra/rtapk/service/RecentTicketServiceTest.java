@@ -224,4 +224,17 @@ class RecentTicketServiceTest {
         assertThat(mine).extracting(TicketReciente::id).containsExactly(1L, 2L, 3L, 4L, 5L);
         verify(rt, never()).getTicket(6);
     }
+
+    @Test
+    void searchMineLooksInAllActiveOwnedTickets() {
+        CurrentUser ana = new CurrentUser("ana", null, "Ana", false);
+        List<TicketRef> refs = java.util.stream.LongStream.rangeClosed(1, 40)
+                .mapToObj(id -> new TicketRef(id, "Asunto " + id)).toList();
+        when(rt.findByQuery("Status = '__Active__' AND Owner = 'ana' AND "
+                + "(Subject LIKE 'luis@x.es' OR Requestor LIKE 'luis@x.es')", "-Created")).thenReturn(refs);
+        when(rt.getTicket(org.mockito.ArgumentMatchers.anyLong()))
+                .thenAnswer(inv -> ticket(inv.getArgument(0), null));
+
+        assertThat(service.searchMine(ana, "  luis@x.es ")).hasSize(RecentTicketService.SEARCH_LIMIT);
+    }
 }

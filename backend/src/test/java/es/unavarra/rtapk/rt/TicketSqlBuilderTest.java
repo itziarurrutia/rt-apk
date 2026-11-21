@@ -30,4 +30,15 @@ class TicketSqlBuilderTest {
         assertThat(sql).isEqualTo("Subject LIKE 'x\\' OR id > \\'0'");
         assertThat(TicketSqlBuilder.quote("a\\b")).isEqualTo("'a\\\\b'");
     }
+
+    @Test
+    void searchesOwnedActiveTicketsBySubjectOrAlsoRequestorWithAt() {
+        assertThat(TicketSqlBuilder.activeOwnedByMatching("ana", "impresora"))
+                .isEqualTo("Status = '__Active__' AND Owner = 'ana' AND Subject LIKE 'impresora'");
+        assertThat(TicketSqlBuilder.activeOwnedByMatching("ana", "luis@unavarra.es"))
+                .isEqualTo("Status = '__Active__' AND Owner = 'ana' AND "
+                        + "(Subject LIKE 'luis@unavarra.es' OR Requestor LIKE 'luis@unavarra.es')");
+        assertThat(TicketSqlBuilder.activeOwnedByMatching("ana", "x' OR id > '0"))
+                .isEqualTo("Status = '__Active__' AND Owner = 'ana' AND Subject LIKE 'x\\' OR id > \\'0'");
+    }
 }

@@ -1,12 +1,43 @@
 <div class="header">
   <div>
     <h1>Tickets</h1>
-    <p class="subtitle">Activos asignados a ti · los 5 más recientes</p>
+    <p class="subtitle">
+      @if (searched()) {
+        Tus tickets activos con «{{ searched() }}»
+        {{ searched().includes('@') ? 'en el asunto o el solicitante' : 'en el asunto' }}
+      } @else {
+        Activos asignados a ti · los 5 más recientes
+      }
+    </p>
   </div>
-  <button mat-stroked-button type="button" (click)="load()" [disabled]="loading()">
+  <button mat-stroked-button type="button" (click)="reload()" [disabled]="loading()">
     <mat-icon>refresh</mat-icon> Actualizar
   </button>
 </div>
+
+<form class="search" [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Buscar en mis tickets</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      matInput
+      [formControl]="query"
+      autocomplete="off"
+      enterkeyhint="search"
+      placeholder="impresora o usuario@unavarra.es"
+    />
+    @if (query.value) {
+      <button matSuffix mat-icon-button type="button" aria-label="Borrar búsqueda" (click)="clear()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+    <mat-hint>Busca en el asunto. Con «@» busca también en el solicitante.</mat-hint>
+    @if (query.hasError('maxlength')) {
+      <mat-error>Como mucho 200 caracteres</mat-error>
+    }
+  </mat-form-field>
+  <button mat-flat-button type="submit" [disabled]="loading()">Buscar</button>
+</form>
 
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
@@ -17,12 +48,21 @@
 
 @if (tickets(); as list) {
   @if (list.length === 0) {
-    <p class="empty">No tienes tickets activos asignados.</p>
+    <p class="empty">
+      {{ searched() ? 'Ninguno de tus tickets activos coincide con la búsqueda.' : 'No tienes tickets activos asignados.' }}
+    </p>
+  } @else if (searched()) {
+    <p class="count">
+      {{ list.length }} {{ list.length === 1 ? 'ticket' : 'tickets' }}
+      @if (list.length >= searchLimit) {
+        (se muestran los {{ searchLimit }} más recientes; afina la búsqueda para ver otros)
+      }
+    </p>
   }
 
   <div class="list">
     @for (t of list; track t.id) {
-      <app-ticket-card [ticket]="t" [back]="back" />
+      <app-ticket-card [ticket]="t" [back]="back()" />
     }
   </div>
 }
