@@ -35,7 +35,7 @@ class AssetRequestServiceTest {
                 "No arranca."
                         + "\n\nEquipo: inventario 78763 · Lenovo ThinkCentre M70q · nº de serie PF4XK21B · usuario carlos.lopez"
                         + "\nDatos salvados: Sí"
-                        + "\n\n-- \nSolicitado por Ana García (ana.garcia) desde rt-apk");
+                        + "\n\n-- \nSolicitado por Ana García (ana.garcia) desde rt-mobile");
     }
 
     @Test
@@ -48,7 +48,7 @@ class AssetRequestServiceTest {
         verify(rt).createTicket(eq("averias"), eq("Formatear y poner imagen de Windows 10 en equipo: 78763"),
                 eq("ana.garcia@example.org"),
                 org.mockito.ArgumentMatchers.endsWith("\nSistema operativo: Windows 10\nDatos salvados: No"
-                        + "\n\n-- \nSolicitado por Ana García (ana.garcia) desde rt-apk"));
+                        + "\n\n-- \nSolicitado por Ana García (ana.garcia) desde rt-mobile"));
     }
 
     @Test

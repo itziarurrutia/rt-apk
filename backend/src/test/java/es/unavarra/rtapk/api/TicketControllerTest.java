@@ -150,7 +150,7 @@ class TicketControllerTest {
                         .content("{\"texto\":\"Cambiado el tóner\",\"resolver\":true}"))
                 .andExpect(status().isNoContent());
 
-        verify(rt).addComment(eq(9L), eq("Comentario de ana.garcia desde rt-apk"),
+        verify(rt).addComment(eq(9L), eq("Comentario de ana.garcia desde rt-mobile"),
                 argThat(t -> t.startsWith("Cambiado el tóner\n\n-- \nEnviado por Ana García (ana.garcia)")));
         verify(rt).updateTicket(9, "resolved", Map.of());
     }

@@ -65,8 +65,8 @@ public class TicketService {
         if (!user.agent() && !isOwner(user, ticket)) {
             throw new AccessDeniedException("Solo el propietario del ticket puede comentarlo");
         }
-        rt.addComment(id, "Comentario de " + user.username() + " desde rt-apk",
-                text.strip() + "\n\n-- \nEnviado por " + user.name() + " (" + user.username() + ") desde rt-apk");
+        rt.addComment(id, "Comentario de " + user.username() + " desde rt-mobile",
+                text.strip() + "\n\n-- \nEnviado por " + user.name() + " (" + user.username() + ") desde rt-mobile");
         if (resolve) {
             Map<String, String> fields = new LinkedHashMap<>();
             String newInventory = inventory == null ? null : inventory.strip();
@@ -96,6 +96,6 @@ public class TicketService {
     public void reply(CurrentUser user, long id, String text) {
         get(user, id);
         // En RT la respuesta figura como enviada por la cuenta de servicio: se deja constancia del autor real
-        rt.addReply(id, text.strip() + "\n\n-- \nEnviado por " + user.name() + " (" + user.username() + ") desde rt-apk");
+        rt.addReply(id, text.strip() + "\n\n-- \nEnviado por " + user.name() + " (" + user.username() + ") desde rt-mobile");
     }
 }

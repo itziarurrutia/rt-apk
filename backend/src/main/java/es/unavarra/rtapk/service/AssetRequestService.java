@@ -89,6 +89,6 @@ public class AssetRequestService {
                 + (asset.usuarioWindows() == null ? "" : " · usuario " + asset.usuarioWindows())
                 + (operatingSystem == null ? "" : "\nSistema operativo: " + operatingSystem)
                 + "\nDatos salvados: " + (dataSaved ? "Sí" : "No")
-                + "\n\n-- \nSolicitado por " + user.name() + " (" + user.username() + ") desde rt-apk";
+                + "\n\n-- \nSolicitado por " + user.name() + " (" + user.username() + ") desde rt-mobile";
     }
 }
