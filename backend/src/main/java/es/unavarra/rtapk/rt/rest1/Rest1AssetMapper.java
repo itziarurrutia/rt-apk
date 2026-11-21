@@ -2,6 +2,7 @@ package es.unavarra.rtapk.rt.rest1;
 
 import es.unavarra.rtapk.domain.Asset;
 import es.unavarra.rtapk.domain.AssetQueue;
+import es.unavarra.rtapk.domain.Windows11Compatibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,11 @@ public class Rest1AssetMapper {
                 cf(f, "Usuario Windows"),
                 queue,
                 kind.tipo(),
-                kind.ambito());
+                kind.ambito(),
+                cf(f, "Procesador"),
+                cf(f, "Memoria"),
+                cf(f, "Sistema Operativo"),
+                Windows11Compatibility.isCompatible(cf(f, "Procesador")));
     }
 
     /** Campo personalizado {@code CF.{name}}; vacío o en blanco se devuelve como null. */

@@ -5,6 +5,8 @@ import es.unavarra.rtapk.domain.InvalidSearchException;
 import es.unavarra.rtapk.domain.TicketNotFoundException;
 import es.unavarra.rtapk.domain.TicketPartiallyUpdatedException;
 import es.unavarra.rtapk.rt.RtAccessException;
+import es.unavarra.rtapk.service.InvalidRequestException;
+import es.unavarra.rtapk.service.MissingEmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({TicketNotFoundException.class, AssetNotFoundException.class})
     ProblemDetail notFound(RuntimeException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler({MissingEmailException.class, InvalidRequestException.class})
+    ProblemDetail badRequest(RuntimeException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(InvalidSearchException.class)

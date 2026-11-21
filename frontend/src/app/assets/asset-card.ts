@@ -76,7 +76,13 @@ export class AssetCard {
     }
     this.dialog
       .open<AssetRequestDialog, AssetRequestDialogData, number>(AssetRequestDialog, {
-        data: { tipo, numeroInventario },
+        data: {
+          tipo,
+          numeroInventario,
+          procesador: this.asset().procesador,
+          sistemaOperativo: this.asset().sistemaOperativo,
+          compatibleWindows11: this.asset().compatibleWindows11,
+        },
         autoFocus: 'first-tabbable',
       })
       .afterClosed()

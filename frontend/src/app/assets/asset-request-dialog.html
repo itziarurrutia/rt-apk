@@ -12,6 +12,31 @@
       }
     </mat-form-field>
 
+    @if (isFormat) {
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="os">
+        <mat-label>Sistema operativo</mat-label>
+        <mat-select formControlName="sistemaOperativo">
+          @for (os of operatingSystems; track os) {
+            <mat-option [value]="os">{{ os }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>
+          @if (data.compatibleWindows11) {
+            Procesador compatible con Windows 11 ({{ data.procesador }})
+          } @else if (!canRunWindows11) {
+            No admite Windows 11 · procesador {{ data.procesador }}
+          } @else if (processorUnknown) {
+            Procesador sin indicar · sistema actual: {{ data.sistemaOperativo ?? 'sin indicar' }}
+          } @else {
+            Sistema operativo actual: {{ data.sistemaOperativo }}
+          }
+        </mat-hint>
+        @if (sistemaOperativo.hasError('required')) {
+          <mat-error>Elige el sistema operativo</mat-error>
+        }
+      </mat-form-field>
+    }
+
     <mat-slide-toggle formControlName="datosSalvados">Datos salvados</mat-slide-toggle>
 
     @if (sending()) {

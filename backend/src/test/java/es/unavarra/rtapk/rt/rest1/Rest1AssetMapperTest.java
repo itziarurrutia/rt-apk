@@ -41,7 +41,11 @@ class Rest1AssetMapperTest {
                 "carlos.lopez",
                 "assets.sobremesas-dpto",
                 "Sobremesa",
-                "dpto"));
+                "dpto",
+                null,
+                null,
+                "Windows 11",
+                false));
     }
 
     @Test

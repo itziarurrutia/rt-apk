@@ -22,6 +22,14 @@ export interface Asset {
   tipo: string | null;
   /** "admon", "dpto", "aulas" o "lab", según la cola. */
   ambito: string | null;
+  /** Campo Procesador. */
+  procesador: string | null;
+  /** Campo Memoria. */
+  memoria: string | null;
+  /** Campo Sistema Operativo. */
+  sistemaOperativo: string | null;
+  /** Si el procesador admite Windows 11 (calculado en el backend). */
+  compatibleWindows11: boolean;
 }
 
 /** Respuesta de /api/assets/{inventario}/pass-iz. Es una contraseña: no guardarla. */

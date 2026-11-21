@@ -58,9 +58,12 @@ public class AssetController {
         return assets.getByInventario(numeroInventario);
     }
 
-    /** Avería o formateo del equipo: contenido del ticket y si los datos del usuario están salvados. */
+    /**
+     * Avería o formateo del equipo: contenido del ticket, si los datos del usuario están salvados y, en un
+     * formateo, el sistema operativo ("Windows 10" o "Windows 11").
+     */
     public record AssetRequest(@NotNull AssetRequestType tipo, @NotBlank @Size(max = 10_000) String texto,
-                               boolean datosSalvados) {
+                               boolean datosSalvados, @Size(max = 50) String sistemaOperativo) {
     }
 
     public record CreatedTicket(long ticketId) {
@@ -72,7 +75,7 @@ public class AssetController {
     public CreatedTicket request(Authentication auth, @PathVariable String numeroInventario,
                                  @Valid @RequestBody AssetRequest request) {
         return new CreatedTicket(requests.create(users.resolve(auth), numeroInventario, request.tipo(),
-                request.texto(), request.datosSalvados()));
+                request.texto(), request.datosSalvados(), request.sistemaOperativo()));
     }
 
     /** Último despliegue del equipo (último mensaje del script de despliegue); 204 si no tiene. */

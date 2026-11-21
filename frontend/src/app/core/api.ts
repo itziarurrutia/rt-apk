@@ -34,10 +34,16 @@ export class AssetApi {
   }
 
   /** Crea un ticket de avería o de formateo del equipo en la cola de averías. */
-  request(numeroInventario: string, tipo: AssetRequestType, texto: string, datosSalvados: boolean) {
+  request(
+    numeroInventario: string,
+    tipo: AssetRequestType,
+    texto: string,
+    datosSalvados: boolean,
+    sistemaOperativo?: string,
+  ) {
     return this.http.post<{ ticketId: number }>(
       `/api/assets/${encodeURIComponent(numeroInventario)}/solicitudes`,
-      { tipo, texto, datosSalvados },
+      { tipo, texto, datosSalvados, sistemaOperativo },
     );
   }
 

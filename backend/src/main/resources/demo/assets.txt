@@ -10,6 +10,9 @@ CF.{Ip eth0}: 172.18.215.244
 CF.{Marca}: TTL
 CF.{Modelo}: TeknoPro Q870
 CF.{Numero de inventario}: 78763
+CF.{Sistema Operativo}: Windows 10
+CF.{Procesador}: Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz
+CF.{Memoria}: 16 GB
 CF.{Numero de serie}: 1236718
 CF.{Fecha de compra}: 2026/11/06
 CF.{Garantia}: 2030/12/21
@@ -28,6 +31,9 @@ CF.{Ip eth0}: 172.18.215.12
 CF.{Marca}: Lenovo
 CF.{Modelo}: ThinkPad T14 Gen 5
 CF.{Numero de inventario}: 78801
+CF.{Sistema Operativo}: Windows 11
+CF.{Procesador}: Intel(R) Core(TM) Ultra 5 125U
+CF.{Memoria}: 32 GB
 CF.{Numero de serie}: PF4XK21B
 CF.{Fecha de compra}: 2024/03/15
 CF.{Garantia}: 2027/03/15
@@ -46,6 +52,9 @@ CF.{Ip eth0}: 172.20.12.107
 CF.{Marca}: Dell
 CF.{Modelo}: OptiPlex 7010
 CF.{Numero de inventario}: 65012
+CF.{Sistema Operativo}: Windows 10
+CF.{Procesador}: Intel(R) Core(TM) i5-7500 CPU @ 3.40GHz
+CF.{Memoria}: 8 GB
 CF.{Numero de serie}: 9XK2L33
 CF.{Fecha de compra}: 2019/09/02
 CF.{Garantia}: 2022/09/02
@@ -64,6 +73,9 @@ CF.{Ip eth0}: 172.18.40.33
 CF.{Marca}: HP
 CF.{Modelo}: EliteDesk 800 G9
 CF.{Numero de inventario}: 70333
+CF.{Sistema Operativo}: Windows 10
+CF.{Procesador}:
+CF.{Memoria}: 16 GB
 CF.{Numero de serie}: 78763
 CF.{Fecha de compra}: 2023/05/10
 CF.{Garantia}: 2028/05/10
