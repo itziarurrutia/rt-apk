@@ -5,12 +5,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { errorMessage, TicketApi } from '../core/api';
 import { updatedSinceLabel } from '../core/format';
 import { TicketsRecientes } from '../core/models';
+import { NewTicketButton } from './new-ticket-button';
 import { TicketCard } from './ticket-card';
 
 /** Tickets activos de la cola actualizados recientemente, con el último mensaje de cada uno. */
 @Component({
   selector: 'app-ticket-list',
-  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, TicketCard],
+  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, TicketCard, NewTicketButton],
   templateUrl: './ticket-list.html',
   styleUrl: './ticket-list.scss',
 })

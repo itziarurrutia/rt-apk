@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { errorMessage, TicketApi } from '../core/api';
 import { MisTickets } from '../core/models';
+import { NewTicketButton } from './new-ticket-button';
 import { TicketCard } from './ticket-card';
 
 /**
@@ -25,6 +26,7 @@ import { TicketCard } from './ticket-card';
     MatInputModule,
     MatProgressBarModule,
     TicketCard,
+    NewTicketButton,
   ],
   templateUrl: './my-tickets.html',
   styleUrl: './my-tickets.scss',

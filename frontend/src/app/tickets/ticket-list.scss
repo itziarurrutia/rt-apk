@@ -22,6 +22,8 @@
 .list {
   display: grid;
   gap: 8px;
+  /* Hueco para que el botón "+" flotante no tape la última ficha */
+  padding-bottom: 80px;
 }
 
 .error {

@@ -6,6 +6,7 @@ import {
   AssetRequestType,
   CurrentUser,
   MisTickets,
+  QueueOption,
   PassIz,
   Ticket,
   TicketHistoryEntry,
@@ -68,6 +69,16 @@ export class TicketApi {
    */
   mine(q?: string) {
     return this.http.get<MisTickets>('/api/tickets/mios', { params: q ? { q } : {} });
+  }
+
+  /** Colas en las que se puede crear un ticket. */
+  queues() {
+    return this.http.get<QueueOption[]>('/api/tickets/colas');
+  }
+
+  /** Crea un ticket; el solicitante es el usuario que ha iniciado sesión. */
+  create(ticket: { cola: string; asunto: string; texto: string; inventario?: string }) {
+    return this.http.post<{ ticketId: number }>('/api/tickets', ticket);
   }
 
   get(id: number) {

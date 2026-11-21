@@ -78,15 +78,20 @@ public class AssetRequestService {
         return queue;
     }
 
-    static String body(CurrentUser user, Asset asset, String text, boolean dataSaved, String operatingSystem) {
+    /** "Equipo: inventario 78763 · TTL TeknoPro Q870 · nº de serie 1236718 · usuario carlos.lopez" */
+    static String equipmentLine(Asset asset) {
         String model = Stream.of(asset.marca(), asset.modelo()).filter(Objects::nonNull)
                 .collect(Collectors.joining(" "));
-        // "Datos salvados" va al final del texto, justo antes de la firma
-        return text.strip()
-                + "\n\nEquipo: inventario " + asset.numeroInventario()
+        return "Equipo: inventario " + asset.numeroInventario()
                 + (model.isBlank() ? "" : " · " + model)
                 + (asset.numeroSerie() == null ? "" : " · nº de serie " + asset.numeroSerie())
-                + (asset.usuarioWindows() == null ? "" : " · usuario " + asset.usuarioWindows())
+                + (asset.usuarioWindows() == null ? "" : " · usuario " + asset.usuarioWindows());
+    }
+
+    static String body(CurrentUser user, Asset asset, String text, boolean dataSaved, String operatingSystem) {
+        // "Datos salvados" va al final del texto, justo antes de la firma
+        return text.strip()
+                + "\n\n" + equipmentLine(asset)
                 + (operatingSystem == null ? "" : "\nSistema operativo: " + operatingSystem)
                 + "\nDatos salvados: " + (dataSaved ? "Sí" : "No")
                 + "\n\n-- \nSolicitado por " + user.name() + " (" + user.username() + ") desde rt-mobile";

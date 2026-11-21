@@ -101,6 +101,12 @@ export interface TicketReciente {
   contenido: string | null;
 }
 
+/** Cola en la que se puede crear un ticket y de qué trata. */
+export interface QueueOption {
+  name: string;
+  description: string;
+}
+
 /** Respuesta de "Mis tickets" (/api/tickets/mios). */
 export interface MisTickets {
   tickets: TicketReciente[];

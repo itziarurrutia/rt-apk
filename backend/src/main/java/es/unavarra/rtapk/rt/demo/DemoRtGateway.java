@@ -150,11 +150,12 @@ public class DemoRtGateway implements RtGateway {
     }
 
     @Override
-    public long createTicket(String queue, String subject, String requestor, String text) {
+    public long createTicket(String queue, String subject, String requestor, String owner,
+                             Map<String, String> customFields, String text) {
         long id = tickets.stream().mapToLong(Ticket::id).max().orElse(2_000_000) + 1;
         OffsetDateTime now = OffsetDateTime.now();
-        tickets.add(new Ticket(id, subject, queue, "new", "Nobody", requestor == null ? List.of() : List.of(requestor),
-                0, now, now, Map.of()));
+        tickets.add(new Ticket(id, subject, queue, "new", owner == null ? "Nobody" : owner,
+                requestor == null ? List.of() : List.of(requestor), 0, now, now, Map.copyOf(customFields)));
         history.put(id, new CopyOnWriteArrayList<>(List.of(new TicketHistoryEntry(transactionIds.incrementAndGet(),
                 "Create", "svc-rt-apk", now, "Ticket created", text))));
         attachments.put(id, new CopyOnWriteArrayList<>());

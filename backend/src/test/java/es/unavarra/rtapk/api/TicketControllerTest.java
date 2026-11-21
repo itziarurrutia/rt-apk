@@ -40,8 +40,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest({TicketController.class, PublicConfigController.class})
+@org.springframework.boot.context.properties.EnableConfigurationProperties(es.unavarra.rtapk.service.NewTicketProperties.class)
 @Import({SecurityConfig.class, KeycloakJwtAuthenticationConverter.class, CurrentUserResolver.class,
-        TicketService.class, ApiExceptionHandler.class})
+        TicketService.class, es.unavarra.rtapk.service.NewTicketService.class, ApiExceptionHandler.class})
 class TicketControllerTest {
 
     private static final String ANA = "ana.garcia@example.org";
@@ -54,6 +55,10 @@ class TicketControllerTest {
 
     @MockitoBean
     private JwtDecoder jwtDecoder;
+
+    /** Lo usa NewTicketService para los datos del equipo. */
+    @MockitoBean
+    private es.unavarra.rtapk.service.AssetService assets;
 
     /** Sin perfil: profileIncludes devuelve false (valor por defecto del mock). */
     @MockitoBean

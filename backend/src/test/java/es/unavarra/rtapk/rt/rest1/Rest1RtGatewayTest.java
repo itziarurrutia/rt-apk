@@ -165,6 +165,19 @@ class Rest1RtGatewayTest {
     }
 
     @Test
+    void createsTicketWithOwnerAndInventory() {
+        server.expect(requestTo(RT + "/ticket/new?" + AUTH))
+                .andExpect(content().formData(MultiValueMap.fromSingleValue(Map.of("content",
+                        "id: ticket/new\nQueue: apoyo.dpto\nSubject: No imprime\nRequestor: ana@example.org"
+                                + "\nOwner: ana\nCF.{Inventario}: 78763\nText: Hola"))))
+                .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# Ticket 2001500 created.\n", TEXT_UTF8));
+
+        assertThat(gateway.createTicket("apoyo.dpto", "No imprime", "ana@example.org", "ana",
+                Map.of("Inventario", "78763"), "Hola")).isEqualTo(2001500L);
+        server.verify();
+    }
+
+    @Test
     void ticketNotCreatedIsReported() {
         server.expect(requestTo(RT + "/ticket/new?" + AUTH))
                 .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# Could not create ticket. Queue not set\n", TEXT_UTF8));

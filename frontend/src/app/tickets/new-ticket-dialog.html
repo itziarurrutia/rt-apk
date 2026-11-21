@@ -1,0 +1,67 @@
+<h2 mat-dialog-title>Nuevo ticket</h2>
+<form [formGroup]="form" (ngSubmit)="send()">
+  <mat-dialog-content class="content">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Cola</mat-label>
+      <mat-select formControlName="cola">
+        <!-- En el campo, solo el nombre de la cola; su descripción va debajo como ayuda -->
+        <mat-select-trigger>{{ cola.value }}</mat-select-trigger>
+        @for (q of queues(); track q.name) {
+          <mat-option [value]="q.name" class="queue-option">
+            <span class="queue-name">{{ q.name }}</span>
+            @if (q.description) {
+              <span class="queue-description">{{ q.description }}</span>
+            }
+          </mat-option>
+        }
+      </mat-select>
+      @if (queueDescription(); as description) {
+        <mat-hint>{{ description }}</mat-hint>
+      }
+      @if (cola.hasError('required') && cola.touched) {
+        <mat-error>Elige la cola</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Asunto</mat-label>
+      <input matInput formControlName="asunto" autocomplete="off" placeholder="No imprime la impresora del despacho" />
+      @if (asunto.hasError('required') && asunto.touched) {
+        <mat-error>Escribe el asunto</mat-error>
+      } @else if (asunto.hasError('maxlength')) {
+        <mat-error>Como mucho 200 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="texto" rows="5"></textarea>
+      @if (texto.hasError('required') && texto.touched) {
+        <mat-error>Describe el problema</mat-error>
+      } @else if (texto.hasError('maxlength')) {
+        <mat-error>Como mucho 10.000 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="inventory">
+      <mat-label>Inventario</mat-label>
+      <input matInput formControlName="inventario" autocomplete="off" inputmode="numeric" placeholder="78763" />
+      @if (inventario.hasError('pattern')) {
+        <mat-error>Solo letras, números, '.', '_' o '-'</mat-error>
+      } @else if (inventario.hasError('maxlength')) {
+        <mat-error>Como mucho 50 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    @if (sending()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close [disabled]="sending()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="sending()">Crear ticket</button>
+  </mat-dialog-actions>
+</form>

@@ -57,7 +57,17 @@ public interface RtGateway {
      *
      * @param requestor correo del solicitante; null para no indicarlo
      */
-    long createTicket(String queue, String subject, String requestor, String text);
+    default long createTicket(String queue, String subject, String requestor, String text) {
+        return createTicket(queue, subject, requestor, null, Map.of(), text);
+    }
+
+    /**
+     * Crea un ticket con propietario y campos personalizados (nombre del campo: valor) y devuelve su id.
+     *
+     * @param owner usuario de RT propietario; null para dejarlo sin asignar
+     */
+    long createTicket(String queue, String subject, String requestor, String owner, Map<String, String> customFields,
+                      String text);
 
     /** Cambia el estado del ticket (p. ej. "resolved"). */
     default void setStatus(long ticketId, String status) {

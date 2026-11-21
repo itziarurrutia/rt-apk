@@ -5,6 +5,7 @@ import es.unavarra.rtapk.domain.TicketHistoryEntry;
 import es.unavarra.rtapk.domain.TicketQuery;
 import es.unavarra.rtapk.security.CurrentUser;
 import es.unavarra.rtapk.security.CurrentUserResolver;
+import es.unavarra.rtapk.service.NewTicketService;
 import es.unavarra.rtapk.service.TicketService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -27,14 +28,24 @@ import java.util.List;
 public class TicketController {
 
     private final TicketService tickets;
+    private final NewTicketService newTickets;
     private final CurrentUserResolver users;
 
-    public TicketController(TicketService tickets, CurrentUserResolver users) {
+    public TicketController(TicketService tickets, NewTicketService newTickets, CurrentUserResolver users) {
         this.tickets = tickets;
+        this.newTickets = newTickets;
         this.users = users;
     }
 
     public record ReplyRequest(@NotBlank @Size(max = 10_000) String text) {
+    }
+
+    /** Ticket nuevo: cola (de las permitidas), asunto, descripción y nº de inventario opcional. */
+    public record NewTicketRequest(@NotBlank @Size(max = 100) String cola, @NotBlank @Size(max = 200) String asunto,
+                                   @NotBlank @Size(max = 10_000) String texto, @Size(max = 50) String inventario) {
+    }
+
+    public record CreatedTicket(long ticketId) {
     }
 
     /**
@@ -66,6 +77,20 @@ public class TicketController {
     @GetMapping("/tickets/{id}/history")
     public List<TicketHistoryEntry> history(Authentication auth, @PathVariable long id) {
         return tickets.history(users.resolve(auth), id);
+    }
+
+    /** Colas en las que se puede crear un ticket. */
+    @GetMapping("/tickets/colas")
+    public List<es.unavarra.rtapk.service.NewTicketProperties.QueueOption> queues(Authentication auth) {
+        users.resolve(auth);
+        return newTickets.queues();
+    }
+
+    @PostMapping("/tickets")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreatedTicket create(Authentication auth, @Valid @RequestBody NewTicketRequest request) {
+        return new CreatedTicket(newTickets.create(users.resolve(auth), request.cola(), request.asunto(),
+                request.texto(), request.inventario()));
     }
 
     @PostMapping("/tickets/{id}/comentarios")

@@ -38,6 +38,21 @@ rt:
   read-timeout: 20s
 
 app:
+  new-ticket:
+    # Colas que se pueden elegir al crear un ticket con el botón "+", con el texto que explica de qué tratan
+    queues:
+      - name: apoyo.aulas
+        description: "Incidencias de aulas, salas, proyectores, licencias…"
+      - name: apoyo.si
+        description: "Cerraduras, tarjetas, RT, Office 365, Acrobat, Google Suite…"
+      - name: apoyo.dpto
+        description: "Apoyo a departamentos e institutos de investigación"
+      - name: apoyo.admon
+        description: "Apoyo a personal PTGAS"
+      - name: sistemas
+        description: "Red, DNS, wifi…"
+      - name: averias
+        description: "Mantenimiento microinformático"
   assets:
     # Cola de RT de los tickets de avería y de formateo abiertos desde la ficha de un equipo
     request-queue: ${APP_ASSETS_REQUEST_QUEUE:averias}

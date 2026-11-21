@@ -146,13 +146,19 @@ public class Rest1RtGateway implements RtGateway {
     }
 
     @Override
-    public long createTicket(String queue, String subject, String requestor, String text) {
+    public long createTicket(String queue, String subject, String requestor, String owner,
+                             Map<String, String> customFields, String text) {
         StringBuilder content = new StringBuilder("id: ticket/new")
                 .append("\nQueue: ").append(oneLine(queue))
                 .append("\nSubject: ").append(oneLine(subject));
         if (requestor != null && !requestor.isBlank()) {
             content.append("\nRequestor: ").append(oneLine(requestor));
         }
+        if (owner != null && !owner.isBlank()) {
+            content.append("\nOwner: ").append(oneLine(owner));
+        }
+        customFields.forEach((name, value) ->
+                content.append("\nCF.{").append(oneLine(name)).append("}: ").append(oneLine(value)));
         content.append("\nText: ").append(indentContinuation(text));
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("content", content.toString());

@@ -1,0 +1,14 @@
+.content {
+  display: grid;
+  gap: 16px;
+  min-width: min(520px, 80vw);
+}
+
+.inventory {
+  max-width: 220px;
+}
+
+.error {
+  margin: 0;
+  color: var(--mat-sys-error);
+}
