@@ -55,7 +55,7 @@ que el backend sirve también la web en el 8085 (las rutas de Angular, p. ej. `/
 ```bash
 cd backend
 ./mvnw -Pfrontend package            # -Dfrontend.npm-install=install para no reinstalar node_modules
-java -jar target/rt-apk-backend-0.1.0-SNAPSHOT.jar
+java -jar target/rt-apk-backend-<versión>.jar
 ```
 
 Abre http://localhost:8085. En Keycloak, el cliente `rt-web` debe tener `http://localhost:8085/*` en

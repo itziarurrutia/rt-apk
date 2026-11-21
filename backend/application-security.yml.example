@@ -31,6 +31,19 @@ RT_PASSWORD: 'contraseña'
 #      ptgas: "activos asignados a mí · creados en las últimas 2 horas"
 #      ingenieria: "activos de Ingeniería · creados en las últimas 2 horas"
 
+# Realm de Keycloak (emisor de los tokens)
+#KEYCLOAK_ISSUER_URI: 'https://baobab2.unavarra.es:7443/realms/rtmobile'
+
+# HTTPS directo en el puerto de la aplicación (contenedor de deploy/jar con el certificado del servidor en un .jks).
+# En Keycloak, rt-web debe admitir https://<servidor>:<puerto>/* (en baobab2, 8443) como redirect URI.
+#server:
+#  ssl:
+#    enabled: true
+#    key-store: 'file:/app/baobab2.unavarra.es.jks'
+#    key-store-type: JKS
+#    key-store-password: 'contraseña-del-jks'
+#    key-alias: 'alias-del-certificado'
+
 #RT_API_VERSION: rest1
 #RT_TIME_ZONE: Europe/Madrid
 
