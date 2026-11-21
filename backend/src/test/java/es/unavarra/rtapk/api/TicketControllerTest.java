@@ -150,7 +150,7 @@ class TicketControllerTest {
                         .content("{\"texto\":\"Cambiado el tóner\",\"resolver\":true}"))
                 .andExpect(status().isNoContent());
 
-        verify(rt).addComment(eq(9L), eq("Comentario de ana.garcia desde rt-mobile"),
+        verify(rt).addComment(eq(9L), eq("Resuelto por ana.garcia via rt-mobile"),
                 argThat(t -> t.startsWith("Cambiado el tóner\n\n-- \nEnviado por Ana García (ana.garcia)")));
         verify(rt).updateTicket(9, "resolved", Map.of());
     }
@@ -163,7 +163,7 @@ class TicketControllerTest {
                         .content("{\"texto\":\"Pendiente de pieza\",\"resolver\":false}"))
                 .andExpect(status().isNoContent());
 
-        verify(rt).addComment(eq(9L), anyString(), anyString());
+        verify(rt).addComment(eq(9L), eq("Comentario de ana.garcia via rt-mobile"), anyString());
         verify(rt, never()).updateTicket(anyLong(), any(), any());
     }
 

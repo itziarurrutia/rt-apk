@@ -65,7 +65,9 @@ public class TicketService {
         if (!user.agent() && !isOwner(user, ticket)) {
             throw new AccessDeniedException("Solo el propietario del ticket puede comentarlo");
         }
-        rt.addComment(id, "Comentario de " + user.username() + " desde rt-mobile",
+        // Asunto: "Resuelto por <usuario> via rt-mobile" si se resuelve; si no, "Comentario de <usuario> via rt-mobile"
+        String subject = (resolve ? "Resuelto por " : "Comentario de ") + user.username() + " via rt-mobile";
+        rt.addComment(id, subject,
                 text.strip() + "\n\n-- \nEnviado por " + user.name() + " (" + user.username() + ") desde rt-mobile");
         if (resolve) {
             Map<String, String> fields = new LinkedHashMap<>();
