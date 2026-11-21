@@ -5,7 +5,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { errorMessage, TicketApi } from '../core/api';
 import { updatedSinceLabel } from '../core/format';
 import { TicketsRecientes } from '../core/models';
-import { BackLink, TicketCard } from './ticket-card';
+import { TicketCard } from './ticket-card';
 
 /** Tickets activos de la cola actualizados recientemente, con el último mensaje de cada uno. */
 @Component({
@@ -24,7 +24,6 @@ export class TicketList {
     const d = this.data();
     return d?.actualizadosDesde ? updatedSinceLabel(d.actualizadosDesde) : '';
   });
-  protected readonly back: BackLink = { path: '/tickets-recientes', label: 'Tickets recientes' };
 
   constructor() {
     this.load();

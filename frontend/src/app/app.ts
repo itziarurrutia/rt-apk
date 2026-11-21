@@ -25,6 +25,6 @@ export class App {
   protected readonly nav: NavItem[] = [
     { path: '/assets', label: 'Equipos', icon: 'computer' },
     { path: '/tickets-recientes', label: 'Tickets recientes', icon: 'schedule' },
-    { path: '/tickets', label: 'Tickets', icon: 'confirmation_number' },
+    { path: '/tickets', label: 'Mis tickets', icon: 'confirmation_number' },
   ];
 }

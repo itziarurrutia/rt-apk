@@ -1,12 +1,14 @@
 <div class="header">
   <div>
-    <h1>Tickets</h1>
+    <h1>Mis tickets</h1>
     <p class="subtitle">
       @if (searched()) {
         Tus tickets activos con «{{ searched() }}»
         {{ searched().includes('@') ? 'en el asunto o el solicitante' : 'en el asunto' }}
+      } @else if (data(); as d) {
+        Activos asignados a ti · {{ d.limite === 1 ? 'el más reciente' : 'los ' + d.limite + ' más recientes' }}
       } @else {
-        Activos asignados a ti · los 5 más recientes
+        Activos asignados a ti
       }
     </p>
   </div>
@@ -46,7 +48,8 @@
   <p class="error" role="alert">{{ message }}</p>
 }
 
-@if (tickets(); as list) {
+@if (data(); as d) {
+  @let list = d.tickets;
   @if (list.length === 0) {
     <p class="empty">
       {{ searched() ? 'Ninguno de tus tickets activos coincide con la búsqueda.' : 'No tienes tickets activos asignados.' }}
@@ -54,15 +57,15 @@
   } @else if (searched()) {
     <p class="count">
       {{ list.length }} {{ list.length === 1 ? 'ticket' : 'tickets' }}
-      @if (list.length >= searchLimit) {
-        (se muestran los {{ searchLimit }} más recientes; afina la búsqueda para ver otros)
+      @if (list.length >= d.limite) {
+        (se muestran los {{ d.limite }} más recientes; afina la búsqueda para ver otros)
       }
     </p>
   }
 
   <div class="list">
     @for (t of list; track t.id) {
-      <app-ticket-card [ticket]="t" [back]="back()" />
+      <app-ticket-card [ticket]="t" />
     }
   </div>
 }

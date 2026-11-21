@@ -67,10 +67,19 @@ export interface TicketReciente {
   estado: string | null;
   propietario: string | null;
   solicitante: string | null;
+  /** Cola de RT (Queue). */
+  cola: string | null;
   departamento: string | null;
   ultimaActualizacion: string | null;
   /** Último mensaje (adjunto text/plain más reciente). */
   contenido: string | null;
+}
+
+/** Respuesta de "Mis tickets" (/api/tickets/mios). */
+export interface MisTickets {
+  tickets: TicketReciente[];
+  /** Máximo de tickets de la respuesta: si tickets llega a él, puede haber más. */
+  limite: number;
 }
 
 export interface TicketsRecientes {

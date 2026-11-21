@@ -54,6 +54,8 @@ app:
     queries-by-role: {}
     # Texto que ve el usuario tras "Perfil <rol>" en la vista de tickets (rol: texto). Por defecto "activos".
     descriptions-by-role: {}
+    # "Mis tickets": cuántos tickets activos del usuario (como propietario) se muestran sin búsqueda (1-30)
+    mine-limit: ${APP_TICKETS_MINE_LIMIT:5}
   security:
     # false = sin autenticación (solo para el modo demo)
     enabled: ${APP_SECURITY_ENABLED:true}

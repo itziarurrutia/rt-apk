@@ -18,6 +18,9 @@ RT_PASSWORD: 'contraseña'
 #APP_TICKETS_HOURS: 5
 #APP_TICKETS_QUEUE: apoyo.dpto
 
+# "Mis tickets": cuántos tickets activos del usuario se muestran sin búsqueda (por defecto 5, máximo 30)
+#APP_TICKETS_MINE_LIMIT: 5
+
 # Consulta de tickets según el rol de Keycloak del usuario (TicketSQL de RT). Con varios roles se
 # unen con OR. Quien no tenga ninguno de estos roles ve la consulta por defecto (si tiene rt-agent).
 # {usuario} y {email} se sustituyen por los del usuario que ha entrado en Keycloak (entre comillas).

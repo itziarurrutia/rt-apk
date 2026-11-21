@@ -1,6 +1,7 @@
 package es.unavarra.rtapk.service;
 
 import es.unavarra.rtapk.domain.AttachmentRef;
+import es.unavarra.rtapk.domain.MisTickets;
 import es.unavarra.rtapk.domain.Ticket;
 import es.unavarra.rtapk.domain.TicketRef;
 import es.unavarra.rtapk.domain.TicketReciente;
@@ -38,9 +39,9 @@ public class RecentTicketService {
 
     private static final Logger log = LoggerFactory.getLogger(RecentTicketService.class);
     private static final int MAX_PARALLEL_TICKETS = 6;
-    /** Tickets de la vista "Tickets" (los del usuario como propietario). */
-    static final int MINE_LIMIT = 5;
-    /** Resultados de la búsqueda en "Tickets" (cada ticket son tres consultas a RT). */
+    /** Tickets de "Mis tickets" sin búsqueda, si no se configura app.tickets.mine-limit. */
+    static final int DEFAULT_MINE_LIMIT = 5;
+    /** Resultados de la búsqueda en "Mis tickets" (cada ticket son tres consultas a RT). */
     public static final int SEARCH_LIMIT = 30;
     /** Marcadores de las consultas por rol. */
     static final String USERNAME = "{usuario}";
@@ -51,22 +52,30 @@ public class RecentTicketService {
     private final String updatedSince;
     private final Map<String, String> queriesByRole;
     private final TicketQueriesProperties queries;
+    private final int mineLimit;
     private final Semaphore permits = new Semaphore(MAX_PARALLEL_TICKETS);
 
     @Autowired
     public RecentTicketService(RtGateway rt,
                                @Value("${app.tickets.queue}") String queue,
                                @Value("${app.tickets.updated-since}") String updatedSince,
-                               TicketQueriesProperties queries) {
+                               TicketQueriesProperties queries,
+                               @Value("${app.tickets.mine-limit:" + DEFAULT_MINE_LIMIT + "}") int mineLimit) {
         this.rt = rt;
         this.queue = queue;
         this.updatedSince = updatedSince;
         this.queriesByRole = queries.queriesByRole();
         this.queries = queries;
+        // Al menos uno; y nunca más que los de una búsqueda
+        this.mineLimit = Math.clamp(mineLimit, 1, SEARCH_LIMIT);
+    }
+
+    public RecentTicketService(RtGateway rt, String queue, String updatedSince, TicketQueriesProperties queries) {
+        this(rt, queue, updatedSince, queries, DEFAULT_MINE_LIMIT);
     }
 
     public RecentTicketService(RtGateway rt, String queue, String updatedSince) {
-        this(rt, queue, updatedSince, new TicketQueriesProperties(Map.of()));
+        this(rt, queue, updatedSince, new TicketQueriesProperties(Map.of()), DEFAULT_MINE_LIMIT);
     }
 
     public TicketsRecientes recent(CurrentUser user) {
@@ -85,21 +94,22 @@ public class RecentTicketService {
     }
 
     /**
-     * Los {@value #MINE_LIMIT} tickets activos más recientes (por fecha de creación) de los que el usuario es
-     * propietario en RT ({@code Owner} = su nombre de usuario de Keycloak), con su último mensaje.
+     * Los tickets activos más recientes (por fecha de creación) de los que el usuario es propietario en RT
+     * ({@code Owner} = su nombre de usuario de Keycloak), con su último mensaje: tantos como
+     * {@code app.tickets.mine-limit} (por defecto {@value #DEFAULT_MINE_LIMIT}).
      */
-    public List<TicketReciente> mine(CurrentUser user) {
+    public MisTickets mine(CurrentUser user) {
         List<TicketRef> refs = rt.findByQuery(TicketSqlBuilder.activeOwnedBy(user.username()), "-Created");
-        return load(refs.stream().limit(MINE_LIMIT).toList());
+        return new MisTickets(load(refs.stream().limit(mineLimit).toList()), mineLimit);
     }
 
     /**
      * Búsqueda entre todos los tickets activos del usuario como propietario: por asunto o, si el texto lleva
      * "@", también por solicitante. Los más recientes primero, como mucho {@value #SEARCH_LIMIT}.
      */
-    public List<TicketReciente> searchMine(CurrentUser user, String text) {
+    public MisTickets searchMine(CurrentUser user, String text) {
         String sql = TicketSqlBuilder.activeOwnedByMatching(user.username(), text.strip());
-        return load(rt.findByQuery(sql, "-Created").stream().limit(SEARCH_LIMIT).toList());
+        return new MisTickets(load(rt.findByQuery(sql, "-Created").stream().limit(SEARCH_LIMIT).toList()), SEARCH_LIMIT);
     }
 
     /**
@@ -178,6 +188,7 @@ public class RecentTicketService {
                     ticket.status(),
                     ticket.owner(),
                     String.join(", ", ticket.requestors()),
+                    blankToNull(ticket.queue()),
                     blankToNull(ticket.customFields().get("NDepartamento")),
                     ticket.lastUpdated(),
                     lastPlainTextMessage(ref.id()));
@@ -229,7 +240,7 @@ public class RecentTicketService {
     }
 
     private static TicketReciente partial(TicketRef ref) {
-        return new TicketReciente(ref.id(), ref.subject(), null, null, null, null, null, null);
+        return new TicketReciente(ref.id(), ref.subject(), null, null, null, null, null, null, null);
     }
 
     private static String blankToNull(String value) {

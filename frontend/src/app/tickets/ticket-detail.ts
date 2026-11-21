@@ -59,7 +59,7 @@ export class TicketDetail {
   protected readonly historyLabel = historyLabel;
   /** Lista desde la que se abrió (estado de la navegación); por defecto, Tickets. */
   protected readonly back: BackLink =
-    (history.state as { back?: BackLink } | null)?.back ?? { path: '/tickets', label: 'Tickets' };
+    (history.state as { back?: BackLink } | null)?.back ?? { path: '/tickets', label: 'Mis tickets' };
 
   constructor() {
     effect((onCleanup) => {

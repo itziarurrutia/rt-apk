@@ -19,7 +19,7 @@ export const routes: Routes = [
   },
   {
     path: 'tickets',
-    title: 'Tickets',
+    title: 'Mis tickets',
     loadComponent: () => import('./tickets/my-tickets').then((m) => m.MyTickets),
   },
   {

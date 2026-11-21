@@ -15,21 +15,20 @@
   </mat-expansion-panel-header>
 
   <ng-template matExpansionPanelContent>
-    <div class="details">
-      <a mat-stroked-button [routerLink]="['/tickets', t.id]" [state]="{ back: back() }">
-        <mat-icon>open_in_new</mat-icon> Abrir #{{ t.id }}
-      </a>
-      @if (t.estado) {
+    @if (t.estado) {
+      <div class="details">
         <span class="status" [attr.data-status]="t.estado">{{ statusLabel(t.estado) }}</span>
-      }
-    </div>
-
-    <dl>
-      <div>
-        <dt>Departamento</dt>
-        <dd>{{ t.departamento ?? '—' }}</dd>
       </div>
-    </dl>
+    }
+
+    @if (showDepartment()) {
+      <dl>
+        <div>
+          <dt>Departamento</dt>
+          <dd>{{ t.departamento ?? '—' }}</dd>
+        </div>
+      </dl>
+    }
 
     <h3>Último mensaje</h3>
     @if (t.contenido) {

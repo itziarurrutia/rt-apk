@@ -8,14 +8,11 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { errorMessage, TicketApi } from '../core/api';
-import { TicketReciente } from '../core/models';
-import { BackLink, TicketCard } from './ticket-card';
-
-/** Máximo de resultados que devuelve el backend en una búsqueda (RecentTicketService.SEARCH_LIMIT). */
-const SEARCH_LIMIT = 30;
+import { MisTickets } from '../core/models';
+import { TicketCard } from './ticket-card';
 
 /**
- * Tickets activos de los que el usuario es propietario en RT: sin búsqueda, los 5 más recientes; con
+ * Tickets activos de los que el usuario es propietario en RT: sin búsqueda, los más recientes; con
  * búsqueda (?q=), los que contienen el texto en el asunto o, si lleva "@", también en el solicitante.
  */
 @Component({
@@ -44,16 +41,10 @@ export class MyTickets {
     validators: [Validators.maxLength(200)],
   });
   protected readonly form = new FormGroup({ query: this.query });
-  protected readonly tickets = signal<TicketReciente[] | null>(null);
+  protected readonly data = signal<MisTickets | null>(null);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly searched = computed(() => this.q()?.trim() ?? '');
-  protected readonly back = computed<BackLink>(() => ({
-    path: '/tickets',
-    label: 'Tickets',
-    queryParams: this.searched() ? { q: this.searched() } : undefined,
-  }));
-  protected readonly searchLimit = SEARCH_LIMIT;
   private request?: Subscription;
 
   constructor() {
@@ -92,12 +83,12 @@ export class MyTickets {
     this.loading.set(true);
     this.error.set(null);
     this.request = this.api.mine(q || undefined).subscribe({
-      next: (tickets) => {
-        this.tickets.set(tickets);
+      next: (data) => {
+        this.data.set(data);
         this.loading.set(false);
       },
       error: (e) => {
-        this.tickets.set(null);
+        this.data.set(null);
         this.error.set(errorMessage(e));
         this.loading.set(false);
       },

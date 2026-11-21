@@ -4,10 +4,10 @@ import {
   Asset,
   AssetMatch,
   CurrentUser,
+  MisTickets,
   PassIz,
   Ticket,
   TicketHistoryEntry,
-  TicketReciente,
   TicketsRecientes,
 } from './models';
 
@@ -40,11 +40,11 @@ export class TicketApi {
   }
 
   /**
-   * Tickets activos de los que el usuario es propietario: sin texto, los 5 más recientes; con texto, los que
+   * Tickets activos de los que el usuario es propietario: sin texto, los más recientes; con texto, los que
    * lo contienen en el asunto (o también en el solicitante si lleva "@").
    */
   mine(q?: string) {
-    return this.http.get<TicketReciente[]>('/api/tickets/mios', { params: q ? { q } : {} });
+    return this.http.get<MisTickets>('/api/tickets/mios', { params: q ? { q } : {} });
   }
 
   get(id: number) {

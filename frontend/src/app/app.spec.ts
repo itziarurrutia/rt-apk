@@ -17,7 +17,7 @@ describe('App', () => {
     expect(Array.from(links).map((a) => a.textContent?.trim())).toEqual([
       'computer Equipos',
       'schedule Tickets recientes',
-      'confirmation_number Tickets',
+      'confirmation_number Mis tickets',
     ]);
   });
 });

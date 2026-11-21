@@ -1,13 +1,13 @@
 import { DatePipe } from '@angular/common';
-import { Component, input } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { Component, computed, input } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
 import { statusLabel } from '../core/format';
 import { TicketReciente } from '../core/models';
 
 /** Destino del botón "volver" del detalle: la lista desde la que se abrió el ticket. */
+/** Cola cuyos tickets llevan el campo Departamento (NDepartamento). */
+const DEPARTMENT_QUEUE = 'apoyo.dpto';
+
 export interface BackLink {
   path: string;
   label: string;
@@ -17,18 +17,20 @@ export interface BackLink {
 
 /**
  * Ficha plegable de un ticket (vistas Tickets y Tickets recientes): plegada muestra asunto, solicitante y
- * fecha; desplegada, estado, departamento, el último mensaje y el enlace al detalle.
+ * fecha; desplegada, estado, departamento (solo en apoyo.dpto) y el último mensaje.
  */
 @Component({
   selector: 'app-ticket-card',
-  imports: [DatePipe, MatButtonModule, MatExpansionModule, MatIconModule, RouterLink],
+  imports: [DatePipe, MatExpansionModule],
   templateUrl: './ticket-card.html',
   styleUrl: './ticket-card.scss',
 })
 export class TicketCard {
   readonly ticket = input.required<TicketReciente>();
-  /** Lista a la que vuelve el detalle del ticket. */
-  readonly back = input.required<BackLink>();
 
   protected readonly statusLabel = statusLabel;
+  /** El departamento solo tiene sentido en la cola de apoyo a departamentos. */
+  protected readonly showDepartment = computed(
+    () => this.ticket().cola?.toLowerCase() === DEPARTMENT_QUEUE,
+  );
 }

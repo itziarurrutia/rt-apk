@@ -1,6 +1,7 @@
 package es.unavarra.rtapk.service;
 
 import es.unavarra.rtapk.domain.AttachmentRef;
+import es.unavarra.rtapk.domain.MisTickets;
 import es.unavarra.rtapk.domain.Ticket;
 import es.unavarra.rtapk.domain.TicketRef;
 import es.unavarra.rtapk.domain.TicketReciente;
@@ -54,7 +55,7 @@ class RecentTicketServiceTest {
 
         assertThat(result.cola()).isEqualTo("apoyo.dpto");
         assertThat(result.tickets()).containsExactly(new TicketReciente(1, "Asunto 1", "new", "david.blasco",
-                "a@example.org, b@example.org", "Economia", UPDATED, "Hola,\nno imprime & no escanea.\nGracias"));
+                "a@example.org, b@example.org", "apoyo.dpto", "Economia", UPDATED, "Hola,\nno imprime & no escanea.\nGracias"));
         verify(rt, never()).getAttachmentContent(10);
         verify(rt, never()).getAttachmentContent(20);
     }
@@ -108,7 +109,7 @@ class RecentTicketServiceTest {
 
         // Se mantiene el orden de la búsqueda; el que falla conserva al menos id y asunto
         assertThat(tickets).extracting(TicketReciente::id).containsExactly(1L, 2L);
-        assertThat(tickets.getFirst()).isEqualTo(new TicketReciente(1, "Asunto 1", null, null, null, null, null, null));
+        assertThat(tickets.getFirst()).isEqualTo(new TicketReciente(1, "Asunto 1", null, null, null, null, null, null, null));
         assertThat(tickets.get(1).departamento()).isEqualTo("Economia");
     }
 
@@ -219,10 +220,27 @@ class RecentTicketServiceTest {
         when(rt.getTicket(org.mockito.ArgumentMatchers.anyLong()))
                 .thenAnswer(inv -> ticket(inv.getArgument(0), null));
 
-        List<TicketReciente> mine = service.mine(ana);
+        MisTickets mine = service.mine(ana);
 
-        assertThat(mine).extracting(TicketReciente::id).containsExactly(1L, 2L, 3L, 4L, 5L);
+        assertThat(mine.tickets()).extracting(TicketReciente::id).containsExactly(1L, 2L, 3L, 4L, 5L);
+        assertThat(mine.limite()).isEqualTo(5);
         verify(rt, never()).getTicket(6);
+    }
+
+    @Test
+    void mineLimitIsConfigurable() {
+        RecentTicketService three = new RecentTicketService(rt, "apoyo.dpto", "5 hours ago",
+                new TicketQueriesProperties(Map.of()), 3);
+        List<TicketRef> refs = java.util.stream.LongStream.rangeClosed(1, 7)
+                .mapToObj(id -> new TicketRef(id, "Asunto " + id)).toList();
+        when(rt.findByQuery(anyString(), org.mockito.ArgumentMatchers.eq("-Created"))).thenReturn(refs);
+        when(rt.getTicket(org.mockito.ArgumentMatchers.anyLong()))
+                .thenAnswer(inv -> ticket(inv.getArgument(0), null));
+
+        MisTickets mine = three.mine(new CurrentUser("ana", null, "Ana", false));
+
+        assertThat(mine.tickets()).hasSize(3);
+        assertThat(mine.limite()).isEqualTo(3);
     }
 
     @Test
@@ -235,6 +253,6 @@ class RecentTicketServiceTest {
         when(rt.getTicket(org.mockito.ArgumentMatchers.anyLong()))
                 .thenAnswer(inv -> ticket(inv.getArgument(0), null));
 
-        assertThat(service.searchMine(ana, "  luis@x.es ")).hasSize(RecentTicketService.SEARCH_LIMIT);
+        assertThat(service.searchMine(ana, "  luis@x.es ").tickets()).hasSize(RecentTicketService.SEARCH_LIMIT);
     }
 }
