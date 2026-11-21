@@ -38,6 +38,11 @@ rt:
   read-timeout: 20s
 
 app:
+  assets:
+    # Cola de RT de los tickets de avería y de formateo abiertos desde la ficha de un equipo
+    request-queue: ${APP_ASSETS_REQUEST_QUEUE:averias}
+    # Usuario de RT del script de despliegue: su último mensaje en el asset es el "Último despliegue"
+    deployment-user: ${APP_ASSETS_DEPLOYMENT_USER:powershell}
   tls:
     # CA adicionales de confianza (PEM, separadas por comas). Unavarra CA2 firma los certificados de
     # Keycloak (baobab2) y rt5, y Java no la trae. Vacío = solo los certificados de Java.

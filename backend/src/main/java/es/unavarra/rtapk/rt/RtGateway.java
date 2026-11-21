@@ -52,6 +52,13 @@ public interface RtGateway {
      */
     void addComment(long ticketId, String subject, String text);
 
+    /**
+     * Crea un ticket y devuelve su id.
+     *
+     * @param requestor correo del solicitante; null para no indicarlo
+     */
+    long createTicket(String queue, String subject, String requestor, String text);
+
     /** Cambia el estado del ticket (p. ej. "resolved"). */
     default void setStatus(long ticketId, String status) {
         updateTicket(ticketId, status, Map.of());

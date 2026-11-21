@@ -3,12 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import {
   Asset,
   AssetMatch,
+  AssetRequestType,
   CurrentUser,
   MisTickets,
   PassIz,
   Ticket,
   TicketHistoryEntry,
   TicketsRecientes,
+  UltimoDespliegue,
 } from './models';
 
 @Injectable({ providedIn: 'root' })
@@ -22,6 +24,21 @@ export class AssetApi {
 
   get(numeroInventario: string) {
     return this.http.get<Asset>(`/api/assets/${encodeURIComponent(numeroInventario)}`);
+  }
+
+  /** Último despliegue del equipo; null si no tiene ninguno registrado (204). */
+  ultimoDespliegue(numeroInventario: string) {
+    return this.http.get<UltimoDespliegue | null>(
+      `/api/assets/${encodeURIComponent(numeroInventario)}/ultimo-despliegue`,
+    );
+  }
+
+  /** Crea un ticket de avería o de formateo del equipo en la cola de averías. */
+  request(numeroInventario: string, tipo: AssetRequestType, texto: string, datosSalvados: boolean) {
+    return this.http.post<{ ticketId: number }>(
+      `/api/assets/${encodeURIComponent(numeroInventario)}/solicitudes`,
+      { tipo, texto, datosSalvados },
+    );
   }
 
   /** Pass_iz y su fragmento; se pide solo al activar el switch y no se guarda. */

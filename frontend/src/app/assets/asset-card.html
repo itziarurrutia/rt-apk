@@ -13,8 +13,11 @@
 
   <mat-card-content>
     <mat-chip-set class="chips">
-      @if (matchedByLabel(); as label) {
-        <mat-chip disabled class="match">Coincide por {{ label }}</mat-chip>
+      @if (asset().tipo; as tipo) {
+        <mat-chip disabled class="kind" [attr.aria-label]="'Tipo: ' + tipo">{{ tipo }}</mat-chip>
+      }
+      @if (asset().ambito; as ambito) {
+        <mat-chip disabled class="scope" [attr.aria-label]="'Ámbito: ' + ambito">{{ ambito }}</mat-chip>
       }
       @if (inWarranty() === true) {
         <mat-chip disabled class="ok">En garantía</mat-chip>
@@ -131,5 +134,38 @@
         </dl>
       </section>
     </div>
+
+    @if (asset().numeroInventario) {
+      <mat-expansion-panel class="ajuste mat-elevation-z0" (opened)="loadAjuste()">
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>tune</mat-icon> Último despliegue</mat-panel-title>
+          @if (ajuste(); as a) {
+            <mat-panel-description>{{ a.fecha | date: 'dd/MM/yyyy HH:mm' }}</mat-panel-description>
+          }
+        </mat-expansion-panel-header>
+
+        @if (ajusteLoading()) {
+          <mat-spinner diameter="24" />
+        } @else if (ajusteError(); as message) {
+          <p class="error" role="alert">{{ message }}</p>
+          <button mat-button type="button" (click)="loadAjuste()">Reintentar</button>
+        } @else if (ajuste(); as a) {
+          <pre class="ajuste-content" tabindex="0" aria-label="Contenido del último despliegue">{{ a.contenido }}</pre>
+        } @else if (ajuste() === null) {
+          <p class="empty">No tiene registrado el despliegue.</p>
+        }
+      </mat-expansion-panel>
+    }
   </mat-card-content>
+
+  @if (asset().numeroInventario) {
+    <mat-card-actions class="requests">
+      <button mat-stroked-button type="button" (click)="openRequest('AVERIA')">
+        <mat-icon>build</mat-icon> Reportar avería
+      </button>
+      <button mat-stroked-button type="button" (click)="openRequest('FORMATEO')">
+        <mat-icon>restart_alt</mat-icon> Solicitar formateo
+      </button>
+    </mat-card-actions>
+  }
 </mat-card>

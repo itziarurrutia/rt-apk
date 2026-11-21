@@ -38,7 +38,10 @@ class Rest1AssetMapperTest {
                 LocalDate.of(2026, 11, 6),
                 LocalDate.of(2030, 12, 21),
                 "2026/01/31*",
-                "carlos.lopez"));
+                "carlos.lopez",
+                "assets.sobremesas-dpto",
+                "Sobremesa",
+                "dpto"));
     }
 
     @Test

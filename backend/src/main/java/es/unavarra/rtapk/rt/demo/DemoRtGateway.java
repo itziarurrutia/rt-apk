@@ -55,6 +55,15 @@ public class DemoRtGateway implements RtGateway {
             attachments.put(t.id(), new CopyOnWriteArrayList<>());
             addMessage(t.id(), message);
         }
+        // Despliegues del asset de ejemplo 1908964 (inventario 78763): cuenta el último de "powershell"
+        OffsetDateTime base = OffsetDateTime.parse("2026-11-03T09:00:00+01:00");
+        addAssetMessage(1908964, "powershell", base, "Despliegue inicial (sustituido por el siguiente).");
+        addAssetMessage(1908964, "powershell", base.plusDays(10), """
+                Ajuste Final
+                - Unido al dominio dyc.a.unavarra.es
+                - Usuario carlos.lopez con perfil itinerante
+                - Impresora del despacho 113001002 instalada""");
+        addAssetMessage(1908964, "jlopez", base.plusDays(12), "Revisado por el técnico: todo correcto.");
     }
 
     @Override
@@ -94,19 +103,31 @@ public class DemoRtGateway implements RtGateway {
 
     @Override
     public List<TicketHistoryEntry> getHistory(long ticketId) {
-        getTicket(ticketId);
-        return List.copyOf(history.get(ticketId));
+        // En demo los assets no son tickets: sin historial registrado se devuelve la lista vacía
+        List<TicketHistoryEntry> entries = history.get(ticketId);
+        return entries == null ? List.of() : List.copyOf(entries);
     }
 
     @Override
     public List<AttachmentRef> getAttachments(long ticketId) {
-        getTicket(ticketId);
-        return List.copyOf(attachments.get(ticketId));
+        // En demo los assets no son tickets: sin adjuntos registrados se devuelve la lista vacía
+        List<AttachmentRef> list = attachments.get(ticketId);
+        return list == null ? List.of() : List.copyOf(list);
     }
 
     @Override
     public String getAttachmentContent(long attachmentId) {
         return attachmentContents.get(attachmentId);
+    }
+
+    /**
+     * Mensaje en el historial de un asset de ejemplo: en demo los assets no son tickets, así que se guarda aparte
+     * con el id del asset.
+     */
+    public void addAssetMessage(long assetId, String creator, OffsetDateTime created, String text) {
+        history.computeIfAbsent(assetId, id -> new CopyOnWriteArrayList<>())
+                .add(new TicketHistoryEntry(transactionIds.incrementAndGet(), "Comment", creator, created,
+                        "Comments added by " + creator, text));
     }
 
     @Override
@@ -126,6 +147,20 @@ public class DemoRtGateway implements RtGateway {
             entries.add(new TicketHistoryEntry(transactionIds.incrementAndGet(), "Comment", "svc-rt-apk",
                     OffsetDateTime.now(), "Comments added", text));
         }
+    }
+
+    @Override
+    public long createTicket(String queue, String subject, String requestor, String text) {
+        long id = tickets.stream().mapToLong(Ticket::id).max().orElse(2_000_000) + 1;
+        OffsetDateTime now = OffsetDateTime.now();
+        tickets.add(new Ticket(id, subject, queue, "new", "Nobody", requestor == null ? List.of() : List.of(requestor),
+                0, now, now, Map.of()));
+        history.put(id, new CopyOnWriteArrayList<>(List.of(new TicketHistoryEntry(transactionIds.incrementAndGet(),
+                "Create", "svc-rt-apk", now, "Ticket created", text))));
+        attachments.put(id, new CopyOnWriteArrayList<>());
+        addMessage(id, text);
+        log.info("Demo: ticket {} creado en {}: {}", id, queue, subject);
+        return id;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package es.unavarra.rtapk.rt.rest1;
 
 import es.unavarra.rtapk.domain.Asset;
+import es.unavarra.rtapk.domain.AssetQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,8 @@ public class Rest1AssetMapper {
 
     public Asset toAsset(Rest1Record record) {
         Map<String, String> f = record.fields();
+        String queue = f.get("Queue") == null || f.get("Queue").isBlank() ? null : f.get("Queue").strip();
+        AssetQueue kind = AssetQueue.parse(queue);
         return new Asset(
                 Rest1TicketMapper.parseId(f.get("id")),
                 cf(f, "Numero de inventario"),
@@ -33,7 +36,10 @@ public class Rest1AssetMapper {
                 parseDate(cf(f, "Fecha de compra")),
                 parseDate(cf(f, "Garantia")),
                 cf(f, "Fecha_p"),
-                cf(f, "Usuario Windows"));
+                cf(f, "Usuario Windows"),
+                queue,
+                kind.tipo(),
+                kind.ambito());
     }
 
     /** Campo personalizado {@code CF.{name}}; vacío o en blanco se devuelve como null. */

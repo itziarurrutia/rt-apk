@@ -14,10 +14,17 @@ mat-card-title a {
   margin: 8px 0 4px;
 }
 
-mat-chip.match {
+/* Tipo (portátil/sobremesa) y ámbito (admon, dpto, aulas, lab), sacados de la cola del asset */
+mat-chip.kind {
   --mat-chip-disabled-container-opacity: 1;
   --mat-chip-disabled-label-text-color: var(--mat-sys-on-secondary-container);
   --mat-chip-elevated-disabled-container-color: var(--mat-sys-secondary-container);
+}
+
+mat-chip.scope {
+  --mat-chip-disabled-container-opacity: 1;
+  --mat-chip-disabled-label-text-color: var(--mat-sys-on-primary-container);
+  --mat-chip-elevated-disabled-container-color: var(--mat-sys-primary-container);
 }
 
 mat-chip.ok {
@@ -150,5 +157,61 @@ dd {
 
   .mono {
     font-size: 13px;
+  }
+}
+
+/* Avería y formateo: tickets en la cola de averías */
+.requests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px;
+}
+
+/* Ajuste final: desplegable, se carga al abrirlo */
+.ajuste {
+  /* Sin sombra (mat-elevation-z0) y separado de los botones de avería y formateo */
+  margin: 16px 0 0;
+  border: 1px solid var(--mat-sys-outline-variant);
+
+  mat-panel-title {
+    flex: 0 0 auto;
+    white-space: nowrap;
+
+    mat-icon {
+      margin-right: 8px;
+      color: var(--mat-sys-primary);
+    }
+  }
+
+  mat-panel-description {
+    justify-content: flex-end;
+  }
+
+  .ajuste-subject {
+    margin: 0 0 8px;
+    font: var(--mat-sys-label-large);
+  }
+
+  .ajuste-content {
+    max-height: 320px;
+    overflow: auto;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--mat-sys-outline-variant);
+    border-radius: 6px;
+    background: var(--mat-sys-surface-container-lowest);
+    font: var(--mat-sys-body-medium);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .empty {
+    margin: 0;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  .error {
+    color: var(--mat-sys-error);
   }
 }

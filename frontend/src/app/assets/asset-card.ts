@@ -3,14 +3,18 @@ import { Component, computed, effect, inject, input, signal, untracked } from '@
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AssetApi, errorMessage } from '../core/api';
-import { formatMac, isOnOrAfterToday, MATCHED_BY_LABEL } from '../core/format';
-import { Asset, AssetSearchField, PassIz } from '../core/models';
+import { formatMac, isOnOrAfterToday } from '../core/format';
+import { Asset, AssetRequestType, AssetSearchField, PassIz, UltimoDespliegue } from '../core/models';
+import { AssetRequestDialog, AssetRequestDialogData } from './asset-request-dialog';
 
 @Component({
   selector: 'app-asset-card',
@@ -19,6 +23,7 @@ import { Asset, AssetSearchField, PassIz } from '../core/models';
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    MatExpansionModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatSlideToggleModule,
@@ -29,17 +34,61 @@ import { Asset, AssetSearchField, PassIz } from '../core/models';
 })
 export class AssetCard {
   private readonly api = inject(AssetApi);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly asset = input.required<Asset>();
-  /** Campo por el que ha coincidido la búsqueda; no se muestra en el detalle. */
+  /** Campo por el que ha coincidido la búsqueda (ya no se muestra: la ficha enseña tipo y ámbito). */
   readonly matchedBy = input<AssetSearchField>();
   /** Si es true, el título enlaza al detalle del asset. */
   readonly linkToDetail = input(false);
 
-  protected readonly matchedByLabel = computed(() => {
-    const field = this.matchedBy();
-    return field ? MATCHED_BY_LABEL[field] : null;
-  });
+  /** Último despliegue: undefined = sin cargar; null = el equipo no tiene ninguno registrado. */
+  protected readonly ajuste = signal<UltimoDespliegue | null | undefined>(undefined);
+  protected readonly ajusteLoading = signal(false);
+  protected readonly ajusteError = signal<string | null>(null);
+
+  /** Se carga al desplegar la sección (son varias consultas a RT), y solo la primera vez. */
+  protected loadAjuste(): void {
+    const numeroInventario = this.asset().numeroInventario;
+    if (!numeroInventario || this.ajusteLoading() || this.ajuste() !== undefined) {
+      return;
+    }
+    this.ajusteLoading.set(true);
+    this.ajusteError.set(null);
+    this.api.ultimoDespliegue(numeroInventario).subscribe({
+      next: (ajuste) => {
+        this.ajuste.set(ajuste ?? null);
+        this.ajusteLoading.set(false);
+      },
+      error: (e) => {
+        this.ajusteError.set(errorMessage(e));
+        this.ajusteLoading.set(false);
+      },
+    });
+  }
+
+  /** Abre el formulario de avería o formateo; al crear el ticket avisa con su número. */
+  protected openRequest(tipo: AssetRequestType): void {
+    const numeroInventario = this.asset().numeroInventario;
+    if (!numeroInventario) {
+      return;
+    }
+    this.dialog
+      .open<AssetRequestDialog, AssetRequestDialogData, number>(AssetRequestDialog, {
+        data: { tipo, numeroInventario },
+        autoFocus: 'first-tabbable',
+      })
+      .afterClosed()
+      .subscribe((ticketId) => {
+        if (ticketId) {
+          this.snackBar.open(`Ticket #${ticketId} creado en la cola de averías`, 'Cerrar', {
+            duration: 6000,
+          });
+        }
+      });
+  }
+
   protected readonly title = computed(() =>
     [this.asset().marca, this.asset().modelo].filter(Boolean).join(' ') || 'Equipo sin marca/modelo',
   );

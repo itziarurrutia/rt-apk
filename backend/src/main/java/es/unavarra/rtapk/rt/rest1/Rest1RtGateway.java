@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 public class Rest1RtGateway implements RtGateway {
 
     private static final String LIST_FIELDS = "Subject,Queue,Status,Owner,Requestors,Priority,Created,LastUpdated";
+    private static final Pattern CREATED = Pattern.compile("Ticket (\\d+) created");
     private static final Pattern SEARCH_LINE = Pattern.compile("^(\\d+):\\s?(.*)$");
     /** Id, nombre (puede llevar paréntesis) y "(tipo/subtipo / tamaño)" al final. */
     private static final Pattern ATTACHMENT_LINE =
@@ -142,6 +143,30 @@ public class Rest1RtGateway implements RtGateway {
         if (!response.hasCommentContaining("recorded") && !response.hasCommentContaining("added")) {
             throw new RtAccessException("RT no confirmó el comentario: " + String.join(" | ", response.allComments().toList()));
         }
+    }
+
+    @Override
+    public long createTicket(String queue, String subject, String requestor, String text) {
+        StringBuilder content = new StringBuilder("id: ticket/new")
+                .append("\nQueue: ").append(oneLine(queue))
+                .append("\nSubject: ").append(oneLine(subject));
+        if (requestor != null && !requestor.isBlank()) {
+            content.append("\nRequestor: ").append(oneLine(requestor));
+        }
+        content.append("\nText: ").append(indentContinuation(text));
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("content", content.toString());
+        Rest1Response response = client.call(c -> c.post().uri("/ticket/new")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(form));
+        // "# Ticket 2001234 created."
+        return response.allComments()
+                .map(CREATED::matcher)
+                .filter(Matcher::find)
+                .map(m -> Long.parseLong(m.group(1)))
+                .findFirst()
+                .orElseThrow(() -> new RtAccessException(
+                        "RT no creó el ticket: " + String.join(" | ", response.allComments().toList())));
     }
 
     @Override

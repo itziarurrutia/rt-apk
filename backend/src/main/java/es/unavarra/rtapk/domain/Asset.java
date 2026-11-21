@@ -8,6 +8,9 @@ import java.time.LocalDate;
  *
  * @param id     id del ticket de RT que representa el asset
  * @param fechaP valor tal cual viene de RT (puede llevar marcas como un {@code *} final)
+ * @param cola   cola de RT del asset (p. ej. assets.sobremesas-dpto)
+ * @param tipo   "Portátil" o "Sobremesa", según la cola; null si no lo indica
+ * @param ambito "admon", "dpto", "aulas" o "lab", según la cola; null si no lo indica
  */
 public record Asset(
         long id,
@@ -21,5 +24,16 @@ public record Asset(
         LocalDate fechaCompra,
         LocalDate garantia,
         String fechaP,
-        String usuarioWindows) {
+        String usuarioWindows,
+        String cola,
+        String tipo,
+        String ambito) {
+
+    /** Sin cola (datos de prueba o servicios que no la devuelven). */
+    public Asset(long id, String numeroInventario, String numeroSerie, String marca, String modelo, String sufijoDns,
+                 String ipEth0, String macEth0, LocalDate fechaCompra, LocalDate garantia, String fechaP,
+                 String usuarioWindows) {
+        this(id, numeroInventario, numeroSerie, marca, modelo, sufijoDns, ipEth0, macEth0, fechaCompra, garantia,
+                fechaP, usuarioWindows, null, null, null);
+    }
 }

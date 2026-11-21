@@ -1,0 +1,10 @@
+.content {
+  display: grid;
+  gap: 16px;
+  min-width: min(520px, 80vw);
+}
+
+.error {
+  margin: 0;
+  color: var(--mat-sys-error);
+}

@@ -151,6 +151,29 @@ class Rest1RtGatewayTest {
     }
 
     @Test
+    void createsTicketAndReturnsItsId() {
+        server.expect(requestTo(RT + "/ticket/new?" + AUTH))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(content().formData(MultiValueMap.fromSingleValue(Map.of("content",
+                        "id: ticket/new\nQueue: averias\nSubject: Avería en el equipo 78763\nRequestor: ana@example.org"
+                                + "\nText: No arranca.\n \n Datos salvados: No"))))
+                .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# Ticket 2001234 created.\n", TEXT_UTF8));
+
+        assertThat(gateway.createTicket("averias", "Avería en el equipo 78763", "ana@example.org",
+                "No arranca.\n\nDatos salvados: No")).isEqualTo(2001234L);
+        server.verify();
+    }
+
+    @Test
+    void ticketNotCreatedIsReported() {
+        server.expect(requestTo(RT + "/ticket/new?" + AUTH))
+                .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# Could not create ticket. Queue not set\n", TEXT_UTF8));
+
+        assertThatThrownBy(() -> gateway.createTicket("averias", "x", null, "y"))
+                .isInstanceOf(RtAccessException.class).hasMessageContaining("Could not create ticket");
+    }
+
+    @Test
     void statusChangeRejectedByRtIsReported() {
         server.expect(requestTo(RT + "/ticket/1546090/edit?" + AUTH))
                 .andRespond(withSuccess("RT/6.0.2 200 Ok\n\n# You are not allowed to modify ticket 1546090.\n", TEXT_UTF8));

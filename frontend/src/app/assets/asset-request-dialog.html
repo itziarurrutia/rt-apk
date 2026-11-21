@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>{{ title }} · equipo {{ data.numeroInventario }}</h2>
+<form [formGroup]="form" (ngSubmit)="send()">
+  <mat-dialog-content class="content">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ data.tipo === 'AVERIA' ? 'Describe la avería' : 'Detalles del formateo' }}</mat-label>
+      <textarea matInput formControlName="texto" rows="6"></textarea>
+      <mat-hint>Será el contenido del ticket en la cola de averías.</mat-hint>
+      @if (texto.hasError('required') && texto.touched) {
+        <mat-error>Escribe el contenido del ticket</mat-error>
+      } @else if (texto.hasError('maxlength')) {
+        <mat-error>Como mucho 10.000 caracteres</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="datosSalvados">Datos salvados</mat-slide-toggle>
+
+    @if (sending()) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close [disabled]="sending()">Cancelar</button>
+    <button mat-flat-button type="submit" [disabled]="sending()">Crear ticket</button>
+  </mat-dialog-actions>
+</form>

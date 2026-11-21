@@ -16,6 +16,12 @@ export interface Asset {
   /** Texto tal cual viene de RT (puede llevar un '*' final). */
   fechaP: string | null;
   usuarioWindows: string | null;
+  /** Cola de RT del asset, p. ej. assets.sobremesas-dpto. */
+  cola: string | null;
+  /** "Portátil" o "Sobremesa", según la cola. */
+  tipo: string | null;
+  /** "admon", "dpto", "aulas" o "lab", según la cola. */
+  ambito: string | null;
 }
 
 /** Respuesta de /api/assets/{inventario}/pass-iz. Es una contraseña: no guardarla. */
@@ -24,6 +30,16 @@ export interface PassIz {
   /** Caracteres 10 a 18 de passIz. */
   fragmento: string;
 }
+
+/** Último despliegue del equipo: último mensaje del script de despliegue en el asset. */
+export interface UltimoDespliegue {
+  transaccionId: number;
+  fecha: string | null;
+  contenido: string;
+}
+
+/** Solicitudes desde la ficha de un equipo (ticket en la cola de averías). */
+export type AssetRequestType = 'AVERIA' | 'FORMATEO';
 
 export interface AssetMatch {
   matchedBy: AssetSearchField;
