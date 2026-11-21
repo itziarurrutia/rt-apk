@@ -128,6 +128,16 @@ class TicketControllerTest {
     }
 
     @Test
+    void ticketsOwnedByTheUserCanBeOpened() throws Exception {
+        when(rt.getTicket(8)).thenReturn(new Ticket(8, "Asunto 8", "Soporte", "open", "Ana.Garcia",
+                List.of("otra@example.org"), 0, OffsetDateTime.parse("2024-03-04T10:22:11+01:00"), null, Map.of()));
+
+        mvc.perform(get("/api/tickets/8").with(user(ANA)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(8));
+    }
+
+    @Test
     void userHistoryHidesInternalComments() throws Exception {
         when(rt.getTicket(1)).thenReturn(ticket(1, ANA));
         when(rt.getHistory(1)).thenReturn(List.of(

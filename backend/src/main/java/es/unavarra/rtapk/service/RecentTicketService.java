@@ -38,6 +38,8 @@ public class RecentTicketService {
 
     private static final Logger log = LoggerFactory.getLogger(RecentTicketService.class);
     private static final int MAX_PARALLEL_TICKETS = 6;
+    /** Tickets de la vista "Tickets" (los del usuario como propietario). */
+    static final int MINE_LIMIT = 5;
     /** Marcadores de las consultas por rol. */
     static final String USERNAME = "{usuario}";
     static final String EMAIL = "{email}";
@@ -78,6 +80,15 @@ public class RecentTicketService {
             throw new AccessDeniedException("No tienes un perfil con consulta de tickets");
         }
         return new TicketsRecientes(queue, updatedSince, load(rt.findRecentActive(queue, updatedSince)), List.of());
+    }
+
+    /**
+     * Los {@value #MINE_LIMIT} tickets activos más recientes (por fecha de creación) de los que el usuario es
+     * propietario en RT ({@code Owner} = su nombre de usuario de Keycloak), con su último mensaje.
+     */
+    public List<TicketReciente> mine(CurrentUser user) {
+        List<TicketRef> refs = rt.findByQuery(TicketSqlBuilder.activeOwnedBy(user.username()), "-Created");
+        return load(refs.stream().limit(MINE_LIMIT).toList());
     }
 
     /**

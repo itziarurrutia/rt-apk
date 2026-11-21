@@ -42,6 +42,11 @@ public final class TicketSqlBuilder {
                 + " AND Status = '__Active__')";
     }
 
+    /** "Status = '__Active__' AND Owner = 'usuario'" */
+    public static String activeOwnedBy(String owner) {
+        return "Status = '__Active__' AND Owner = " + quote(owner);
+    }
+
     static String quote(String value) {
         return "'" + escape(value) + "'";
     }

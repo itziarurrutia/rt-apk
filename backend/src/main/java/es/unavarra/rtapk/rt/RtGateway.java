@@ -24,6 +24,14 @@ public interface RtGateway {
     /** Tickets que cumplen una consulta TicketSQL (de la configuración, nunca del usuario): id y asunto. */
     List<TicketRef> findByQuery(String ticketSql);
 
+    /**
+     * Como {@link #findByQuery(String)} pero ordenados por {@code orderBy} (campo de RT; con "-" delante,
+     * descendente, p. ej. "-Created"). Por defecto, sin ordenar.
+     */
+    default List<TicketRef> findByQuery(String ticketSql, String orderBy) {
+        return findByQuery(ticketSql);
+    }
+
     /** @throws es.unavarra.rtapk.domain.TicketNotFoundException si el ticket no existe */
     Ticket getTicket(long id);
 

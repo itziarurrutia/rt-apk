@@ -1,4 +1,4 @@
-<a mat-button routerLink="/tickets"><mat-icon>arrow_back</mat-icon> Tickets</a>
+<a mat-button [routerLink]="back.path"><mat-icon>arrow_back</mat-icon> {{ back.label }}</a>
 
 @if (loading()) {
   <mat-progress-bar mode="indeterminate" />

@@ -14,6 +14,10 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const links = (fixture.nativeElement as HTMLElement).querySelectorAll('.top-nav a');
-    expect(Array.from(links).map((a) => a.textContent?.trim())).toEqual(['computer Equipos', 'confirmation_number Tickets']);
+    expect(Array.from(links).map((a) => a.textContent?.trim())).toEqual([
+      'computer Equipos',
+      'schedule Tickets recientes',
+      'confirmation_number Tickets',
+    ]);
   });
 });

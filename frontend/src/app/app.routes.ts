@@ -13,9 +13,14 @@ export const routes: Routes = [
     loadComponent: () => import('./assets/asset-detail').then((m) => m.AssetDetail),
   },
   {
+    path: 'tickets-recientes',
+    title: 'Tickets recientes',
+    loadComponent: () => import('./tickets/ticket-list').then((m) => m.TicketList),
+  },
+  {
     path: 'tickets',
     title: 'Tickets',
-    loadComponent: () => import('./tickets/ticket-list').then((m) => m.TicketList),
+    loadComponent: () => import('./tickets/my-tickets').then((m) => m.MyTickets),
   },
   {
     path: 'tickets/:id',

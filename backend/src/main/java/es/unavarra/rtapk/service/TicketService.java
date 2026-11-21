@@ -38,8 +38,9 @@ public class TicketService {
     public Ticket get(CurrentUser user, long id) {
         Ticket ticket = rt.getTicket(id);
         boolean requestor = user.hasEmail() && ticket.hasRequestor(user.email());
-        // Sin rt-agent: solo sus tickets como solicitante o los que devuelve la consulta de su perfil
-        if (!user.agent() && !requestor && !profiles.profileIncludes(user, id)) {
+        boolean owner = ticket.owner() != null && ticket.owner().equalsIgnoreCase(user.username());
+        // Sin rt-agent: solo sus tickets como solicitante o propietario, o los que devuelve la consulta de su perfil
+        if (!user.agent() && !requestor && !owner && !profiles.profileIncludes(user, id)) {
             // 404 y no 403 para no revelar qué tickets existen
             throw new TicketNotFoundException(id);
         }

@@ -19,6 +19,7 @@ import { forkJoin } from 'rxjs';
 import { errorMessage, TicketApi } from '../core/api';
 import { historyLabel, statusLabel } from '../core/format';
 import { Ticket, TicketHistoryEntry } from '../core/models';
+import { BackLink } from './ticket-card';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -56,6 +57,9 @@ export class TicketDetail {
   private readonly formDirective = viewChild(FormGroupDirective);
   protected readonly statusLabel = statusLabel;
   protected readonly historyLabel = historyLabel;
+  /** Lista desde la que se abrió (estado de la navegación); por defecto, Tickets. */
+  protected readonly back: BackLink =
+    (history.state as { back?: BackLink } | null)?.back ?? { path: '/tickets', label: 'Tickets' };
 
   constructor() {
     effect((onCleanup) => {

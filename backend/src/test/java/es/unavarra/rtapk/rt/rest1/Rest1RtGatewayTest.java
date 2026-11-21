@@ -143,6 +143,17 @@ class Rest1RtGatewayTest {
     }
 
     @Test
+    void findsTicketsByQueryInTheRequestedOrder() {
+        server.expect(requestTo(RT + "/search/ticket?query="
+                        + "Status%20%3D%20%27__Active__%27%20AND%20Owner%20%3D%20%27ana%27&orderby=-Created&" + AUTH))
+                .andRespond(withSuccess(load("search-short.txt"), TEXT_UTF8));
+
+        assertThat(gateway.findByQuery("Status = '__Active__' AND Owner = 'ana'", "-Created"))
+                .extracting(TicketRef::id).containsExactly(1909547L, 1917113L, 1917617L, 1917756L);
+        server.verify();
+    }
+
+    @Test
     void noRecentTickets() {
         server.expect(requestTo(startsWith(RT + "/search/ticket")))
                 .andRespond(withSuccess("RT/4.4.4 200 Ok\n\nNo matching results.\n", TEXT_UTF8));

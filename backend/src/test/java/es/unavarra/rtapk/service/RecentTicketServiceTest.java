@@ -209,4 +209,19 @@ class RecentTicketServiceTest {
         assertThatThrownBy(() -> service.queryFor("solicitante", new CurrentUser("ana", null, "Ana", false, Set.of())))
                 .isInstanceOf(AccessDeniedException.class);
     }
+
+    @Test
+    void mineReturnsTheFiveNewestActiveTicketsOwnedByTheUser() {
+        CurrentUser ana = new CurrentUser("ana.o'neil", null, "Ana", false);
+        List<TicketRef> refs = java.util.stream.LongStream.rangeClosed(1, 7)
+                .mapToObj(id -> new TicketRef(id, "Asunto " + id)).toList();
+        when(rt.findByQuery("Status = '__Active__' AND Owner = 'ana.o\\'neil'", "-Created")).thenReturn(refs);
+        when(rt.getTicket(org.mockito.ArgumentMatchers.anyLong()))
+                .thenAnswer(inv -> ticket(inv.getArgument(0), null));
+
+        List<TicketReciente> mine = service.mine(ana);
+
+        assertThat(mine).extracting(TicketReciente::id).containsExactly(1L, 2L, 3L, 4L, 5L);
+        verify(rt, never()).getTicket(6);
+    }
 }

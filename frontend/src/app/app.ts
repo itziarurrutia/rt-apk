@@ -24,6 +24,7 @@ export class App {
   protected readonly auth = inject(AuthService);
   protected readonly nav: NavItem[] = [
     { path: '/assets', label: 'Equipos', icon: 'computer' },
+    { path: '/tickets-recientes', label: 'Tickets recientes', icon: 'schedule' },
     { path: '/tickets', label: 'Tickets', icon: 'confirmation_number' },
   ];
 }

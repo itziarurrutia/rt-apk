@@ -7,6 +7,7 @@ import {
   PassIz,
   Ticket,
   TicketHistoryEntry,
+  TicketReciente,
   TicketsRecientes,
 } from './models';
 
@@ -36,6 +37,11 @@ export class TicketApi {
   /** Tickets activos de la cola configurada actualizados recientemente, con su último mensaje. */
   recent() {
     return this.http.get<TicketsRecientes>('/api/tickets/recientes');
+  }
+
+  /** Los 5 tickets activos más recientes de los que el usuario es propietario. */
+  mine() {
+    return this.http.get<TicketReciente[]>('/api/tickets/mios');
   }
 
   get(id: number) {

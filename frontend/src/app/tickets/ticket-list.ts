@@ -1,25 +1,16 @@
-import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RouterLink } from '@angular/router';
 import { errorMessage, TicketApi } from '../core/api';
-import { statusLabel, updatedSinceLabel } from '../core/format';
+import { updatedSinceLabel } from '../core/format';
 import { TicketsRecientes } from '../core/models';
+import { BackLink, TicketCard } from './ticket-card';
 
 /** Tickets activos de la cola actualizados recientemente, con el último mensaje de cada uno. */
 @Component({
   selector: 'app-ticket-list',
-  imports: [
-    DatePipe,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatProgressBarModule,
-    RouterLink,
-  ],
+  imports: [MatButtonModule, MatIconModule, MatProgressBarModule, TicketCard],
   templateUrl: './ticket-list.html',
   styleUrl: './ticket-list.scss',
 })
@@ -33,7 +24,7 @@ export class TicketList {
     const d = this.data();
     return d?.actualizadosDesde ? updatedSinceLabel(d.actualizadosDesde) : '';
   });
-  protected readonly statusLabel = statusLabel;
+  protected readonly back: BackLink = { path: '/tickets-recientes', label: 'Tickets recientes' };
 
   constructor() {
     this.load();

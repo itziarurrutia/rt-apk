@@ -53,9 +53,20 @@ public class Rest1RtGateway implements RtGateway {
 
     @Override
     public List<TicketRef> findByQuery(String sql) {
-        Rest1Response response = client.call(c -> c.get().uri(b -> b.path("/search/ticket")
+        return searchRefs(client.call(c -> c.get().uri(b -> b.path("/search/ticket")
                 .queryParam("query", "{query}")
-                .build(sql)));
+                .build(sql))));
+    }
+
+    @Override
+    public List<TicketRef> findByQuery(String sql, String orderBy) {
+        return searchRefs(client.call(c -> c.get().uri(b -> b.path("/search/ticket")
+                .queryParam("query", "{query}")
+                .queryParam("orderby", "{orderby}")
+                .build(sql, orderBy))));
+    }
+
+    private static List<TicketRef> searchRefs(Rest1Response response) {
         // Formato corto "1909547: Asunto": al empezar por un número el parser deja esas líneas como comentarios
         return response.allComments()
                 .map(SEARCH_LINE::matcher)
