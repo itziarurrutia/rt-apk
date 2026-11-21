@@ -13,7 +13,7 @@
 
     <groupId>es.unavarra</groupId>
     <artifactId>rt-apk-backend</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <name>rt-apk-backend</name>
     <description>Backend REST que expone Request Tracker a la web/app móvil, protegido con Keycloak</description>
 
