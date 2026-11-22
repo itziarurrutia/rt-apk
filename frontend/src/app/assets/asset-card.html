@@ -8,7 +8,8 @@
         {{ title() }}
       }
     </mat-card-title>
-    <mat-card-subtitle>Inventario {{ asset().numeroInventario ?? '—' }}</mat-card-subtitle>
+    <!-- Asunto del asset (p. ej. eim-dpt-78763); el nº de inventario está en la solapa Inventario -->
+    <mat-card-subtitle>{{ asset().subject ?? 'Inventario ' + (asset().numeroInventario ?? '—') }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
@@ -27,8 +28,10 @@
     </mat-chip-set>
 
     <div class="groups">
-      <section aria-labelledby="g-tipo-{{ asset().id }}">
-        <h3 id="g-tipo-{{ asset().id }}"><mat-icon>devices</mat-icon> Tipo de equipo</h3>
+      <mat-expansion-panel class="group mat-elevation-z0" [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>devices</mat-icon> Tipo de equipo</mat-panel-title>
+        </mat-expansion-panel-header>
         <dl>
           <div>
             <dt>Marca</dt>
@@ -47,11 +50,17 @@
             <dd>{{ asset().memoria ?? '—' }}</dd>
           </div>
         </dl>
-      </section>
+      </mat-expansion-panel>
 
-      <section aria-labelledby="g-red-{{ asset().id }}">
-        <h3 id="g-red-{{ asset().id }}"><mat-icon>lan</mat-icon> Red</h3>
+      <mat-expansion-panel class="group mat-elevation-z0">
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>lan</mat-icon> Red</mat-panel-title>
+        </mat-expansion-panel-header>
         <dl>
+          <div>
+            <dt>Hostname</dt>
+            <dd class="mono">{{ asset().hostname ?? '—' }}</dd>
+          </div>
           <div>
             <dt>IP eth0</dt>
             <dd class="mono">{{ asset().ipEth0 ?? '—' }}</dd>
@@ -65,10 +74,12 @@
             <dd>{{ asset().sufijoDns ?? '—' }}</dd>
           </div>
         </dl>
-      </section>
+      </mat-expansion-panel>
 
-      <section aria-labelledby="g-inv-{{ asset().id }}">
-        <h3 id="g-inv-{{ asset().id }}"><mat-icon>inventory_2</mat-icon> Inventario</h3>
+      <mat-expansion-panel class="group mat-elevation-z0">
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>inventory_2</mat-icon> Inventario</mat-panel-title>
+        </mat-expansion-panel-header>
         <dl>
           <div>
             <dt>Nº de inventario</dt>
@@ -83,14 +94,20 @@
             <dd>{{ (asset().fechaCompra | date: 'dd/MM/yyyy') ?? '—' }}</dd>
           </div>
           <div>
-            <dt>Garantía</dt>
-            <dd>{{ (asset().garantia | date: 'dd/MM/yyyy') ?? '—' }}</dd>
+            <dt>Edificio</dt>
+            <dd>{{ asset().edificio ?? '—' }}</dd>
+          </div>
+          <div>
+            <dt>Código de espacio</dt>
+            <dd>{{ asset().codigoEspacio ?? '—' }}</dd>
           </div>
         </dl>
-      </section>
+      </mat-expansion-panel>
 
-      <section aria-labelledby="g-cuenta-{{ asset().id }}">
-        <h3 id="g-cuenta-{{ asset().id }}"><mat-icon>person</mat-icon> Cuenta</h3>
+      <mat-expansion-panel class="group mat-elevation-z0">
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>person</mat-icon> Cuenta</mat-panel-title>
+        </mat-expansion-panel-header>
         <dl>
           <div>
             <dt>Usuario Windows</dt>
@@ -140,7 +157,7 @@
             }
           </div>
         </dl>
-      </section>
+      </mat-expansion-panel>
     </div>
 
     @if (asset().numeroInventario) {

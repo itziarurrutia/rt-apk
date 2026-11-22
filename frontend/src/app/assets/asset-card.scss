@@ -42,29 +42,34 @@ mat-chip.ko {
 /* Bloques: Tipo de equipo, Red, Inventario y Cuenta. Dos por fila en escritorio, uno en móvil */
 .groups {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  /* min(): en pantallas de menos de 280px el bloque no se sale de la ficha */
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
   gap: 12px;
   margin-top: 8px;
+  /* Al plegar un bloque no se estira para igualar la altura del de al lado */
+  align-items: start;
 }
 
-section {
-  padding: 12px 16px;
+/* Cada bloque es desplegable; Tipo de equipo empieza abierto */
+.group {
+  --mat-expansion-container-background-color: var(--mat-sys-surface-container-low);
+  --mat-expansion-container-shape: 8px;
+  --mat-expansion-header-collapsed-state-height: 48px;
+  --mat-expansion-header-expanded-state-height: 48px;
   border-radius: 8px;
-  background: var(--mat-sys-surface-container-low);
-}
 
-h3 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 8px;
-  font: var(--mat-sys-title-small);
-  color: var(--mat-sys-primary);
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: var(--mat-sys-title-small);
+    color: var(--mat-sys-primary);
 
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
   }
 }
 
@@ -147,10 +152,6 @@ dd {
 }
 
 @media (max-width: 599px) {
-  section {
-    padding: 12px;
-  }
-
   dl {
     gap: 12px 16px;
   }

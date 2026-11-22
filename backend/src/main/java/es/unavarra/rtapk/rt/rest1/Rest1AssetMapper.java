@@ -25,6 +25,7 @@ public class Rest1AssetMapper {
         Map<String, String> f = record.fields();
         String queue = f.get("Queue") == null || f.get("Queue").isBlank() ? null : f.get("Queue").strip();
         AssetQueue kind = AssetQueue.parse(queue);
+        String subject = f.get("Subject") == null || f.get("Subject").isBlank() ? null : f.get("Subject").strip();
         return new Asset(
                 Rest1TicketMapper.parseId(f.get("id")),
                 cf(f, "Numero de inventario"),
@@ -44,7 +45,35 @@ public class Rest1AssetMapper {
                 cf(f, "Procesador"),
                 cf(f, "Memoria"),
                 cf(f, "Sistema Operativo"),
-                Windows11Compatibility.isCompatible(cf(f, "Procesador")));
+                Windows11Compatibility.isCompatible(cf(f, "Procesador")),
+                buildingName(cf(f, "Edificio")),
+                cf(f, "Codigo espacio"),
+                subject,
+                hostname(queue, subject));
+    }
+
+    private static final String ADMON_DESKTOPS = "assets.sobremesas-admon";
+
+    /**
+     * Nombre del equipo en red: el subject, salvo en sobremesas-admon, donde es lo anterior al primer "-"
+     * ("pcger70333-gerencia" → "pcger70333").
+     */
+    static String hostname(String queue, String subject) {
+        if (subject == null || !ADMON_DESKTOPS.equalsIgnoreCase(queue)) {
+            return subject;
+        }
+        String first = subject.split("-", 2)[0].strip();
+        return first.isEmpty() ? null : first;
+    }
+
+    /** "113 - Pinos" → "Pinos" (segundo elemento al separar por "-"); sin "-", el valor tal cual. */
+    static String buildingName(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String[] parts = raw.split("-", 2);
+        String name = (parts.length > 1 ? parts[1] : parts[0]).strip();
+        return name.isEmpty() ? null : name;
     }
 
     /** Campo personalizado {@code CF.{name}}; vacío o en blanco se devuelve como null. */

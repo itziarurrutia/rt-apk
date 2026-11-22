@@ -45,7 +45,29 @@ class Rest1AssetMapperTest {
                 null,
                 null,
                 "Windows 11",
-                false));
+                false,
+                "Pinos",
+                "001002",
+                "eim-dpt-78763",
+                "eim-dpt-78763"));
+    }
+
+    @Test
+    void hostnameIsTheSubjectExceptForAdmonDesktops() {
+        assertThat(Rest1AssetMapper.hostname("assets.sobremesas-dpto", "eim-dpt-78763")).isEqualTo("eim-dpt-78763");
+        assertThat(Rest1AssetMapper.hostname("assets.portatiles", "eim-port-78801")).isEqualTo("eim-port-78801");
+        assertThat(Rest1AssetMapper.hostname("assets.sobremesas-admon", "pcger70333-gerencia")).isEqualTo("pcger70333");
+        assertThat(Rest1AssetMapper.hostname("assets.sobremesas-admon", "pcger70333")).isEqualTo("pcger70333");
+        assertThat(Rest1AssetMapper.hostname("assets.sobremesas-admon", null)).isNull();
+    }
+
+    @Test
+    void buildingNameIsTheTextAfterTheDash() {
+        assertThat(Rest1AssetMapper.buildingName("113 - Pinos")).isEqualTo("Pinos");
+        assertThat(Rest1AssetMapper.buildingName("120-Aulario")).isEqualTo("Aulario");
+        assertThat(Rest1AssetMapper.buildingName("Sin codigo")).isEqualTo("Sin codigo");
+        assertThat(Rest1AssetMapper.buildingName("113 - ")).isNull();
+        assertThat(Rest1AssetMapper.buildingName(null)).isNull();
     }
 
     @Test

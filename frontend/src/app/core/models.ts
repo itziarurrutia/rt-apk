@@ -30,6 +30,14 @@ export interface Asset {
   sistemaOperativo: string | null;
   /** Si el procesador admite Windows 11 (calculado en el backend). */
   compatibleWindows11: boolean;
+  /** Nombre del edificio (de "113 - Pinos", "Pinos"). */
+  edificio: string | null;
+  /** Campo Codigo espacio. */
+  codigoEspacio: string | null;
+  /** Asunto del ticket del asset, p. ej. eim-dpt-78763. */
+  subject: string | null;
+  /** Nombre del equipo en red (el subject, salvo en sobremesas-admon). */
+  hostname: string | null;
 }
 
 /** Respuesta de /api/assets/{inventario}/pass-iz. Es una contraseña: no guardarla. */
