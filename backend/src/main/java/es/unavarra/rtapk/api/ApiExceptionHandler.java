@@ -1,6 +1,7 @@
 package es.unavarra.rtapk.api;
 
 import es.unavarra.rtapk.domain.AssetNotFoundException;
+import es.unavarra.rtapk.domain.AssetServiceErrorException;
 import es.unavarra.rtapk.domain.InvalidSearchException;
 import es.unavarra.rtapk.domain.TicketNotFoundException;
 import es.unavarra.rtapk.domain.TicketPartiallyUpdatedException;
@@ -10,6 +11,7 @@ import es.unavarra.rtapk.service.MissingEmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,6 +36,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InvalidSearchException.class)
     ProblemDetail invalidSearch(InvalidSearchException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    /** RT ha contestado 200 con "# Error: ...": se muestra al usuario el texto tras "Error". */
+    @ExceptionHandler(AssetServiceErrorException.class)
+    ProblemDetail assetServiceError(AssetServiceErrorException e) {
+        log.warn("El servicio de equipos de RT devolvió: {}", e.getMessage());
+        return ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(422), e.getMessage());
     }
 
     @ExceptionHandler(RtAccessException.class)

@@ -3,8 +3,9 @@ package es.unavarra.rtapk.rt.rest1;
 import es.unavarra.rtapk.domain.Asset;
 import es.unavarra.rtapk.domain.AssetFechaP;
 import es.unavarra.rtapk.domain.AssetSearchField;
+import es.unavarra.rtapk.domain.AssetServiceErrorException;
 import es.unavarra.rtapk.rt.AssetGateway;
-import es.unavarra.rtapk.rt.RtAccessException;
+import es.unavarra.rtapk.rt.RtCredentialsInterceptor;
 import es.unavarra.rtapk.rt.RtProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
@@ -61,13 +62,21 @@ public class Rest1AssetGateway implements AssetGateway {
         if (response.hasCommentContaining(NOT_FOUND)) {
             return List.of();
         }
-        // Cualquier otro "# Error: ..." es un fallo real, no una búsqueda sin resultados
+        // Cualquier otro "# Error: ..." es un mensaje del servicio que se muestra al usuario. Los 400/500
+        // (HTTP o en la línea de estado) los convierte Rest1Client en "Request Tracker no está disponible".
         response.allComments()
-                .filter(c -> c.toLowerCase().startsWith("error"))
+                .filter(c -> c.regionMatches(true, 0, "error", 0, 5))
                 .findFirst()
                 .ifPresent(c -> {
-                    throw new RtAccessException("El servicio de assets de RT devolvió: " + c);
+                    throw new AssetServiceErrorException(errorText(c));
                 });
         return response.dataRecords();
+    }
+
+    /** "Error: Base de datos no disponible" -> "Base de datos no disponible". */
+    static String errorText(String comment) {
+        String text = comment.substring(5).replaceFirst("^\\s*:?\\s*", "").strip();
+        return text.isEmpty() ? "El servicio de equipos de RT devolvió un error sin detalle"
+                : RtCredentialsInterceptor.redact(text);
     }
 }

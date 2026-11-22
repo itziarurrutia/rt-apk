@@ -3,6 +3,7 @@ package es.unavarra.rtapk.rt.rest1;
 import es.unavarra.rtapk.domain.Asset;
 import es.unavarra.rtapk.domain.AssetFechaP;
 import es.unavarra.rtapk.domain.AssetSearchField;
+import es.unavarra.rtapk.domain.AssetServiceErrorException;
 import es.unavarra.rtapk.rt.RtAccessException;
 import es.unavarra.rtapk.rt.RtCredentialsInterceptor;
 import es.unavarra.rtapk.rt.RtProperties;
@@ -21,6 +22,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 class Rest1AssetGatewayTest {
@@ -88,12 +91,34 @@ class Rest1AssetGatewayTest {
     }
 
     @Test
-    void otherErrorsAreReported() {
+    void otherErrorsShowTheTextAfterError() {
         server.expect(requestTo(RT + "/asset/78763/default" + AUTH))
                 .andRespond(withSuccess("RT/4.4.4 200 Ok\n\n# Error: Base de datos no disponible\n", TEXT_UTF8));
 
         assertThatThrownBy(() -> gateway.find(AssetSearchField.INVENTARIO, "78763"))
-                .isInstanceOf(RtAccessException.class)
-                .hasMessageContaining("Base de datos no disponible");
+                .isInstanceOf(AssetServiceErrorException.class)
+                .hasMessage("Base de datos no disponible");
+    }
+
+    @Test
+    void errorTextWithoutColon() {
+        assertThat(Rest1AssetGateway.errorText("Error   el equipo esta de baja")).isEqualTo("el equipo esta de baja");
+        assertThat(Rest1AssetGateway.errorText("ERROR:")).contains("sin detalle");
+    }
+
+    @Test
+    void http400And500MeanRtUnavailable() {
+        server.expect(requestTo(RT + "/asset/1/default" + AUTH)).andRespond(withServerError());
+        server.expect(requestTo(RT + "/asset/2/default" + AUTH)).andRespond(withBadRequest());
+        server.expect(requestTo(RT + "/asset/3/default" + AUTH))
+                .andRespond(withSuccess("RT/4.4.4 500 Internal Server Error\n", TEXT_UTF8));
+        server.expect(requestTo(RT + "/asset/4/default" + AUTH))
+                .andRespond(withSuccess("RT/4.4.4 400 Bad Request\n", TEXT_UTF8));
+
+        for (String inv : new String[] {"1", "2", "3", "4"}) {
+            assertThatThrownBy(() -> gateway.find(AssetSearchField.INVENTARIO, inv))
+                    .isInstanceOf(RtAccessException.class)
+                    .hasMessageNotContaining("secreto");
+        }
     }
 }
